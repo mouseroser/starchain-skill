@@ -14,12 +14,12 @@
   📥 Step 1 — Task Classification & Lane Routing
 ═══════════════════════════════════════════════════════════
 
-  🔍 review（编排中心）/model opus /think high
+  ☀️ main（小光）/model opus /think high
 
   1. 📋 Classify level → L1 / L2 / L3
   2. 📋 Classify type →
-       A 业务/架构 → coding(sonnet/medium) + review(codex/high)
-       B 算法/性能 → coding(codex/medium) + review(sonnet/medium)
+       A 业务/架构 → coding(sonnet/medium) + review(codex/high) + test(codex/medium)
+       B 算法/性能 → coding(codex/medium) + review(sonnet/medium) + test(sonnet/medium)
        C 混合     → 拆分走 A/B
   3. 输出结构化分配单 → 📋 监控群
 
@@ -36,8 +36,15 @@
 ═══════════════════════════════════════════════════════════
   📐 Step 1.5 — Spec-Kit Gate (L2/L3 Only)
   Based on: github.com/github/spec-kit
-  Executor: 🧠 brainstorming │ Orchestrator: 🔍 review
+  Executor: 🧠 brainstorming │ Orchestrator: ☀️ main
 ═══════════════════════════════════════════════════════════
+
+  打磨层流程（织梦打磨 + Opus 验证）：
+    0️⃣  spawn 织梦 (gemini) /think medium
+        → 产出澄清问题 + 风险 + 研究线索 + 初稿草案
+
+    0️⃣.5 spawn review /model opus
+        → 验证织梦产出，优化逻辑
 
   四步流程：
     1️⃣  specify → specs/{feature}/spec.md
@@ -62,7 +69,7 @@
         ℹ️  Info → 优化建议
 
        ✅ Gate passed → Step 2
-       📐 → 监控群
+       📐 → 头脑风暴群 + 监控群
 
 ═══════════════════════════════════════════════════════════
   ⚡ L1 快速通道
@@ -87,7 +94,10 @@
 ═══════════════════════════════════════════════════════════
   🔨 Step 2 — Development
   Executor: 💻 coding
+  Orchestrator: ☀️ main
 ═══════════════════════════════════════════════════════════
+
+  main 根据 Step 1 判定的 Type 动态 spawn：
 
        ▼                    ▼
   ┌──────────────┐   ┌──────────────┐
@@ -117,11 +127,17 @@
 ═══════════════════════════════════════════════════════════
   🔍 Step 3 — Structured Cross-Review
   Executor: 🔍 review
+  Orchestrator: ☀️ main
 ═══════════════════════════════════════════════════════════
 
-  coding(sonnet) 代码 → review(codex/high) 交叉审查
-  coding(codex) 代码 → review(sonnet/medium) 交叉审查
-  分歧仲裁 → 审查方提出问题 + 编写方反驳 → review(opus/medium) + coding(codex/xhigh)
+  main 根据 Step 1 判定的 Type 动态 spawn：
+
+  Type A: coding(sonnet) 代码 → review(codex/high) 交叉审查
+  Type B: coding(codex) 代码 → review(sonnet/medium) 交叉审查
+
+  分歧仲裁（reviewer 提出问题 + coder 反驳时触发）：
+    → review(opus/medium) + coding(codex/xhigh)
+    → 如果 coder 不反驳，reviewer 判定直接生效，无需仲裁
 
   输出结构化 JSON：
   {
@@ -144,7 +160,8 @@
 
 ═══════════════════════════════════════════════════════════
   🔧 Step 4 — Repair Loop (max 3 rounds)
-  Orchestrator: 🔍 review │ 方案: 🧠 brainstorming │ 执行: 💻 coding
+  Orchestrator: ☀️ main
+  方案: 🧠 brainstorming │ 执行: 💻 coding
 ═══════════════════════════════════════════════════════════
 
   每轮必须携带 context bundle：
@@ -166,7 +183,10 @@
 ═══════════════════════════════════════════════════════════
   🧪 Step 5 — Test Execution
   Executor: 🧪 test
+  Orchestrator: ☀️ main
 ═══════════════════════════════════════════════════════════
+
+  main 根据 Step 1 判定的 Type 动态 spawn：
 
        ▼                    ▼
   ┌──────────────┐   ┌──────────────┐
@@ -203,9 +223,16 @@
 
 ═══════════════════════════════════════════════════════════
   ♻️  Step 5.5 — Epoch Fallback (max 3 Epochs)
+  Orchestrator: ☀️ main
 ═══════════════════════════════════════════════════════════
 
   Entry: Step4-R3 fail OR TF-3 fail
+
+  1. spawn gemini /think high
+     → 产出诊断 memo
+
+  2. spawn brainstorming /model opus /think high
+     → 根因分析 + 回滚决策
 
   回滚选项（每 Epoch 开始时选择）：
     🔙 Rollback to S1
@@ -238,15 +265,22 @@
 
 ═══════════════════════════════════════════════════════════
   📝 Step 6 — Documentation (skip for L1)
-  Executor: 📝 docs │ /model minimax /think high
+  Executor: 📝 docs │ /model opus /think high
+  Orchestrator: ☀️ main
 ═══════════════════════════════════════════════════════════
+
+  1. spawn gemini /think medium
+     → 产出交付说明/FAQ 大纲
+
+  2. spawn docs /model opus
+     → 生成/更新文档
 
   输入：最终 diff + 需求 + 审查摘要 + spec-kit 产出
   📝 → 文档群 + 监控群
 
 ═══════════════════════════════════════════════════════════
   📦 Step 7 — Final Delivery
-  Executor: 🔍 review /model sonnet /think low
+  Executor: ☀️ main /model opus /think high
 ═══════════════════════════════════════════════════════════
 
   交付摘要必须包含：
@@ -255,14 +289,109 @@
     🧪 Test results
     🔍 Review conclusion
     🏷️  Level: L1 / L2 / L3
+    🏷️  Type: A / B / C
     📊 Delivery status: normal | degraded
     📸 Snapshot tags: S1, S2, S3
 
-  → ☀️ main（小光）/model minimax /think high → 组织交付消息
-  → 晨星 收到结果 ✅
-  ✅ → 监控群
+  → 监控群 (-5131273722)
+  → 晨星 (target:1099011886) ✅
 
 ═══════════════════════════════════════════════════════════
   🏁 END
+═══════════════════════════════════════════════════════════
+
+═══════════════════════════════════════════════════════════
+  📊 Model Configuration Matrix
+═══════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────┐
+│  Type A (业务/架构)                                      │
+├─────────────────────────────────────────────────────────┤
+│  Step 2:  coding → sonnet/medium                        │
+│  Step 3:  review → codex/high                           │
+│  Step 5:  test → codex/medium                           │
+│  仲裁:    review(opus/medium) + coding(codex/xhigh)     │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│  Type B (算法/性能)                                      │
+├─────────────────────────────────────────────────────────┤
+│  Step 2:  coding → codex/medium                         │
+│  Step 3:  review → sonnet/medium                        │
+│  Step 5:  test → sonnet/medium                          │
+│  仲裁:    review(opus/medium) + coding(codex/xhigh)     │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│  修复升级路径（所有 Type）                               │
+├─────────────────────────────────────────────────────────┤
+│  Step 4 R1/R2: brainstorming(sonnet/medium)             │
+│                + coding(codex/medium)                   │
+│  Step 4 R3:    brainstorming(opus/high)                 │
+│                + coding(codex/xhigh)                    │
+│  TF-2:         brainstorming(sonnet/medium)             │
+│  TF-3:         brainstorming(opus/high)                 │
+│  Step 5.5:     brainstorming(opus/high)                 │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│  固定配置                                                │
+├─────────────────────────────────────────────────────────┤
+│  main:         opus/high                                │
+│  monitor-bot:  minimax                                  │
+│  docs:         minimax/high                             │
+│  织梦(gemini): gemini-preview (Step 1.5: medium,        │
+│                                Step 5.5: high)          │
+│  brainstorming: sonnet (默认，动态切换到 opus)          │
+└─────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════
+  🛡️ Tool Resilience & Degradation (Step 3.5)
+═══════════════════════════════════════════════════════════
+
+  任何外部 CLI 依赖失败时（如 nlm-gateway.sh）：
+    1. 发送 Warning 告警到监控群
+    2. 跳过失败的工具调用，回退到模型权重
+    3. 继续推进到下一步
+
+  🚫 绝对禁止因工具失败中断流水线
+
+═══════════════════════════════════════════════════════════
+  🔄 Spawn Retry Mechanism
+═══════════════════════════════════════════════════════════
+
+  任何 agent spawn 失败时：
+    1️⃣  第一次失败 → 立即重试（相同参数）
+    2️⃣  第二次失败 → 等待 10 秒后重试
+    3️⃣  第三次仍失败 → 推送告警到监控群 + 通知晨星
+                      → 标记该步骤为 BLOCKED
+
+  🚫 绝不因单次 spawn 失败就跳过步骤或 HALT
+
+═══════════════════════════════════════════════════════════
+  📢 Push Notification Rules
+═══════════════════════════════════════════════════════════
+
+  监控群 (-5131273722) 推送节点：
+    • Step 1: 分配单
+    • Step 1.5: Spec-Kit 结果
+    • Step 2: 开发完成
+    • Step 2.5: 冒烟结果
+    • Step 3: 审查结论
+    • Step 4: 每轮结果
+    • Step 5: 测试结果
+    • Step 5.5: Epoch 状态
+    • Step 7: 交付摘要
+
+  各 agent 职能群推送：
+    • review → 交叉审核群 (-5242448266)
+    • coding → 代码编程群 (-5039283416)
+    • test → 代码测试群 (-5245840611)
+    • brainstorming → 头脑风暴群 (-5231604684)
+    • docs → 项目文档群 (-5095976145)
+    • 织梦(gemini) → 织梦群 (-5264626153)
+
+  ⚠️  sub-agent 推送不可靠，关键推送由 main 补发
+
 ═══════════════════════════════════════════════════════════
 ```

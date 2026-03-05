@@ -51,6 +51,15 @@ Consistency check output levels:
 - Warning: may cause issues, should address
 - Info: optimization suggestions
 
+## 3.5) Tool Resilience & Degradation (Hard Requirement)
+**[!] CLI/Tool Fallback Rule**: Any attempt to use external integrations like `nlm-gateway.sh` (or any CLI requiring auth) MUST gracefully catch errors (`auth_missing`, `auth_expired`, `cli_error`).
+- If a tool fails due to environment issues, the agent MUST NOT crash, loop, or halt the pipeline.
+- Instead, the agent MUST degrade gracefully:
+  1. Log a warning to the monitor group.
+  2. Fall back to basic model reasoning.
+  3. Continue to the next step.
+
+
 ## 4) Step 2 / 2.5 / 3
 
 - Step 2: coding agent executes per tasks.md → create `S1` snapshot.

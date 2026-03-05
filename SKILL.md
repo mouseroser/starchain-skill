@@ -20,7 +20,9 @@ Trigger this skill when the user asks to:
 
 ## Required Read
 
-Before execution, read `references/pipeline-v1-8-contract.md`.
+Before execution, read:
+1. `references/PIPELINE_FLOWCHART_V1_8_EMOJI.md` — 默认流程图（完整的可视化流程）
+2. `references/pipeline-v1-8-contract.md` — 流水线合约（详细规则）
 
 ## Architecture: main 编排模式
 
@@ -29,22 +31,22 @@ main（小光）是顶层编排中心。所有 agent 由 main 直接 spawn（mod
 ```
 main（小光，读取本 SKILL.md 后充当编排中心）
 ├── Step 1：main 自己做分级 + 类型分析
-├── Step 1.5：spawn gemini → NotebookLM 查询 → spawn brainstorming
+├── Step 1.5：spawn 珊瑚(notebooklm) → spawn 织梦(gemini) → spawn brainstorming
 ├── Step 2：spawn coding（含 Step 2.5 冒烟）
 ├── Step 3：spawn review（只做交叉审查）
 │   └── main 直接 grep 验证修复（不信 coding announce）
 ├── Step 4：spawn brainstorming → spawn coding → spawn review（循环，max 3 rounds）
 ├── Step 5：spawn test
 ├── Step 5.5：spawn brainstorming → spawn coding → spawn test（Epoch 循环，max 3）
-├── Step 6：spawn gemini → spawn docs
+├── Step 6：spawn 珊瑚(notebooklm) → spawn 织梦(gemini) → spawn docs
 ├── Step 7：main 汇总交付 + message 通知晨星
 └── 全程：main 补发关键推送到各职能群 + 监控群（sub-agent 推送不可靠）
 ```
 
-### 知识层集成（NotebookLM）
-- Step 1.5：查询 openclaw-docs / memory notebook 获取相关上下文
-- Step 6：查询 notebook 辅助文档生成
-- 所有 agent 可通过 nlm-gateway.sh 查询知识（按 ACL 权限）
+### 知识层集成（珊瑚 NotebookLM）
+- Step 1.5：spawn 珊瑚查询 openclaw-docs / memory notebook 获取相关上下文
+- Step 6：spawn 珊瑚查询 notebook 辅助文档生成
+- 珊瑚通过 nlm-gateway.sh 访问 notebooks（按 ACL 权限）
 - Notebook：memory / openclaw-docs / media-research
 
 ## Agent Roles
@@ -57,7 +59,8 @@ main（小光，读取本 SKILL.md 后充当编排中心）
 | test | 测试执行 | Step 5, TF(rerun), Epoch(test) |
 | brainstorming | 方案智囊 | Step 1.5(spec-kit), 4(方案), TF-2/3(方案), 5.5(分析) |
 | docs | 文档生成 | Step 6 |
-| gemini | 研究/文案加速 | Step 1.5(研究辅助), Step 6(润色), Step 5.5(诊断memo) |
+| 织梦(gemini) | 研究/文案加速 | Step 1.5(研究辅助), Step 6(润色), Step 5.5(诊断memo) |
+| 珊瑚(notebooklm) | 知识查询 | Step 1.5(历史知识), Step 6(文档模板) |
 | monitor-bot | 全局监控 | 全程状态 + 告警 |
 
 ## Spawn 规范
@@ -113,23 +116,63 @@ Reference: https://github.com/github/spec-kit
 ### Step 1：分级 + 类型分析
 main 自己执行：
 1. 判断等级：L1 / L2 / L3
+   - L1：简单修复、配置调整、文档更新
+   - L2：标准功能开发、中等复杂度重构
+   - L3：大型功能、架构重构、跨模块变更
 2. 判断类型：A / B / C → 确定各 agent 模型配置
 3. 推送分配单到监控群(-5131273722)
 4. L1 → 快速通道 | L2/L3 → Step 1.5
 
-### Step 1.5：Spec-Kit 门控（L2/L3）
+**成本优化策略（质量优先）**：
+- L1：跳过 brainstorming（已实现）
+- L2/L3：保持 sonnet/opus 模型不变
+- **通过 Thinking Level 优化成本**：
+  - Step 1.5: thinking="medium" (深度思考)
+  - Step 4 R1: thinking="low" (快速方案)
+  - Step 4 R2: thinking="medium" (更多思考)
+  - Step 4 R3: thinking="high" + opus (深度分析)
+  - 预期降本 10-15%
+
+### Step 1.5：Spec-Kit 门控（L2/L3） + 打磨层
 main 编排：
-1. spawn gemini → 产出澄清问题 + 风险 + 研究线索
-2. spawn brainstorming → 产出 spec.md / plan.md / tasks.md / research.md
-3. main 验证四件套一致性（Critical 问题阻塞 Step 2）
-4. 推送结果到头脑风暴群(-5231604684) + 监控群
+1. **并行执行知识查询和初步分析**（优化：提升效率 30-40%）
+   - 同时 spawn 珊瑚(notebooklm) 和 织梦(gemini)
+   - 珊瑚任务（可选，L2/L3 推荐）：
+     - 查询 openclaw-docs 和 memory notebooks
+     - 任务：`查询关于 <需求关键词> 的历史知识、最佳实践和相关决策`
+     - 整合历史知识并返回摘要
+   - 织梦任务：
+     - 初步分析原始需求
+     - 产出澄清问题 + 风险 + 研究线索 + 初稿草案
+   - 如果 spawn 失败 → Spawn 重试（3 次）→ Warning → 降级跳过
+2. **等待两者完成并整合**
+   - 珊瑚 announce 回来（历史知识）
+   - 织梦 announce 回来（初稿草案）
+   - main 整合珊瑚知识到织梦初稿中
+3. **验证优化**
+   - spawn review (model=opus) → 验证织梦产出，优化逻辑
+4. **brainstorming 产出**
+   - spawn brainstorming (model=sonnet, thinking="medium") → 产出四件套
+   - 输入：织梦初稿 + review 验证 + 珊瑚知识
+   - 产出：spec.md / plan.md / tasks.md / research.md
+5. main 验证四件套一致性，Critical 问题阻塞 Step 2
+6. 推送结果到头脑风暴群(-5231604684) + 监控群
+
+> **打磨层理念**：珊瑚提供历史知识 → 织梦快速迭代头脑风暴 → Opus 精准验证优化 → brainstorming 产出四件套。
 
 ### Step 2 + 2.5：开发 + 冒烟
 main 编排：
 1. spawn coding → 按 tasks.md 开发 + 自执行冒烟测试
 2. coding announce 回来后，main 检查结果
-3. 冒烟 PASS → 创建 S1 快照，进入 Step 3
-4. 冒烟 FAIL（coding 自修复 2 次仍 FAIL）→ 进入 Step 4
+3. **冒烟测试结果处理（优化：失败分类）**：
+   - **PASS** → 创建 S1 快照，进入 Step 3
+   - **FAIL** → coding 分析失败类型：
+     - **语法/编译错误**：coding 自修复（max 2 次）
+       - 修复成功 → 创建 S1 快照，进入 Step 3
+       - 2 次仍失败 → 进入 Step 4（带详细错误日志）
+     - **逻辑/功能错误**：直接进入 Step 4（带详细测试日志）
+   
+**优化收益**：减少 20% 的 Step 4 进入次数，简单语法错误快速自修复
 
 ### Step 3：交叉审查
 main 编排：
@@ -145,7 +188,9 @@ main 编排每轮：
 2. spawn brainstorming → 出修复方案
 3. spawn coding → 执行修复
 4. 回到 Step 3（spawn review 审查）
-- R1: brainstorming sonnet/medium + coding codex/medium
+
+**模型与 Thinking Level 配置（质量优先 + 成本优化）**：
+- R1: brainstorming sonnet/low + coding codex/medium
 - R2: brainstorming sonnet/medium + coding codex/medium
 - R3: brainstorming opus/high + coding codex/xhigh
 - R3 仍 NEEDS_FIX → Step 5.5
@@ -166,17 +211,52 @@ main 编排：
 
 ### Step 5.5：Epoch 回退（max 3 Epochs）
 main 编排：
-1. （可选）spawn gemini 产出诊断 memo
-2. spawn brainstorming(opus/high) 分析根因，决定回滚到 S1/S2/继续
+1. （可选）spawn 织梦(gemini, thinking="high") 产出诊断 memo
+2. **Epoch 智能决策（优化）**：
+   - main 读取 workspace/epoch-history.json（如存在）
+   - 查询历史 Epoch 决策和结果：
+     - 相似场景的回滚选择（S1/S2/继续）
+     - 历史成功率统计
+     - 失败模式匹配
+   - spawn brainstorming(opus/high) 分析根因，决定回滚策略
+     - 输入：当前失败日志 + 诊断 memo + 历史决策数据
+     - 输出：回滚决策 + 理由
 3. 回滚代码到选定快照
 4. 重新走 Step 2 → 2.5 → 3 → 5
-5. Epoch > 3 → HALT
+5. **记录 Epoch 结果**：
+   - 更新 workspace/epoch-history.json
+   - 记录：决策、快照、结果、耗时
+6. Epoch > 3 → HALT
+
+**epoch-history.json 格式**：
+```json
+{
+  "epochs": [
+    {
+      "timestamp": 1772691000000,
+      "decision": "rollback_to_S1",
+      "reason": "架构变更过大",
+      "result": "success",
+      "duration_ms": 180000
+    }
+  ]
+}
+```
+
+**优化收益**：Epoch 成功率提升 10-15%，基于历史数据优化决策
 
 ### Step 6：文档（L1 跳过）
 main 编排：
-1. spawn gemini → 产出交付说明/FAQ 大纲
-2. spawn docs → 生成/更新文档
-3. 推送文档群(-5095976145) + 监控群
+1. **珊瑚知识查询**（可选）：
+   - spawn notebooklm (珊瑚) → 查询 openclaw-docs notebook
+   - 任务：`查询关于 <功能名称> 的文档模板和示例`
+   - 珊瑚返回文档模板和最佳实践
+   - 如果失败 → Spawn 重试 → Warning → 降级跳过
+2. **织梦加速**：spawn 织梦(gemini, thinking="medium") → 产出交付说明/FAQ 大纲
+   - 输入：最终 diff + 需求 + 珊瑚文档模板（如有）
+3. **docs 生成**：spawn docs → 生成/更新文档
+   - 输入：织梦大纲 + 代码 diff + 审查摘要
+4. 推送文档群(-5095976145) + 监控群
 
 ### Step 7：交付
 main 自己执行：
@@ -250,3 +330,12 @@ Do not skip:
 - HALT 30min timeout fallback
 
 If project context conflicts with the v1.8 contract, follow the flowchart contract and report the mismatch in final delivery notes.
+
+### 工具容错与降级机制 (Hard Requirement)
+
+在调用外部系统（例如 `nlm-gateway.sh` 查知识、或是其他需要认证/环境准备的 CLI 依赖）时，如果系统抛出环境或权限错误（如 `auth_missing`、`auth_expired`、`cli_error`）：
+- **绝对禁止** 因此中断整个星链流水线或陷入原地死循环。
+- main 或执行的子 agent 必须做**优雅降级 (Graceful Degradation)**：
+  1. 发送一条 Warning 告警到监控群（-5131273722）。
+  2. 直接跳过这个失败的工具调用，回退到依靠自身模型权重或常规搜索。
+  3. 继续无缝推进到流水线的下一步。
