@@ -339,3 +339,118 @@ If project context conflicts with the v1.8 contract, follow the flowchart contra
   1. 发送一条 Warning 告警到监控群（-5131273722）。
   2. 直接跳过这个失败的工具调用，回退到依靠自身模型权重或常规搜索。
   3. 继续无缝推进到流水线的下一步。
+
+---
+
+## 优化方案总览（v1.8+）
+
+基于《Claude Code多Agent架构实战：量化工程的三权分立》的深度分析，星链流水线实施了 11 个优化方案，分为 P0（质量优先）、P1（数据驱动）、P2（效率提升）三个优先级。
+
+### P0：质量优先（立即生效）
+
+**P0-1: Step 2.5 冒烟测试标准化** (`references/smoke-test-checklist.md`)
+- 明确核心路径、边界条件、依赖检查清单
+- 结构化失败报告（category/item/error/location/suggestion）
+- 失败分类处理：语法错误自修复 vs 逻辑错误进入 Step 4
+- **预期**：Step 5 失败率降低 30%
+
+**P0-2: Step 3 性能基准对比** (`references/performance-baseline.md`)
+- 测量响应时间、内存使用、依赖调用次数
+- 劣化阈值：+20% 时间、+30% 内存、+50% 调用
+- 性能劣化触发 NEEDS_FIX，进入 Step 4 修复
+- **预期**：避免性能劣化进入生产环境
+
+**P0-3: 异常分类和快速失败** (`references/exception-classification.md`)
+- 三层分类：可恢复（重试3次）、不可恢复（立即HALT）、降级（优雅跳过）
+- 可恢复：LLM超时、API限流、网络错误
+- 不可恢复：认证失败、配置错误、权限不足
+- 降级：NotebookLM/Gemini不可用、性能测量失败
+- **预期**：无效重试成本降低 10-15%，异常恢复时间缩短 50%
+
+### P1：数据驱动（1-2周内）
+
+**P1-1: Step 1 分级量化模型** (`references/classification-model.md`)
+- 复杂度评分：files×10 + lines×0.1 + depth×20 + risk×50
+- 阈值：L1<100, L2:100-299, L3≥300
+- 历史追踪（classification-history.json）+ 月度校准
+- **预期**：分级准确率提升 20%
+
+**P1-2: Epoch 决策置信度评分** (`references/epoch-confidence.md`)
+- 置信度 = 历史成功率 × 相似度权重
+- 失败模式关键词匹配 + 相似场景查询
+- 低置信度(<0.5)触发 P1 告警 + 人工介入
+- **预期**：Epoch 成功率提升 15-20%
+
+**P1-3: 成本预算和超支告警** (`references/cost-budget.md`)
+- 分级预算：L1:50k / L2:200k / L3:500k tokens
+- 实时追踪（cost-tracking.json）+ 超支告警
+- 告警阈值：80%→P2, 100%→P1+降级, 120%→P0+强制降级
+- 降级策略：thinking=low, 跳过可选步骤, 限制 Step 4 轮次
+- **预期**：成本可控，避免超预期消耗
+
+**P1-4: monitor-bot 告警分级** (`references/monitor-alert-levels.md`)
+- 四级体系：P0(立即)/P1(1h)/P2(24h)/P3(信息)
+- 异常聚合（5分钟窗口）+ 告警抑制
+- 路由规则：P0/P1→监控群+晨星，P2→监控群
+- **预期**：告警信噪比提升 50%
+
+### P2：效率提升（1个月内）
+
+**P2-1: Step 4 增量审查模式** (`references/incremental-review.md`)
+- R1/R2 使用增量审查（只审查本轮修改）
+- R3 使用完整审查（全面检查）
+- 强制完整审查触发：副作用WARNING、文件>5、行数>100、critical issue
+- Verdict 合并逻辑（更新已修复 issues，添加新 issues）
+- **预期**：Step 4 审查时间减少 40%，成本节省 33%
+
+**P2-2: 任务指纹缓存机制** (`references/task-cache.md`)
+- SHA256 指纹生成（keywords + files + dependencies）
+- 相似度匹配（阈值 0.8）+ TTL 失效（7天）
+- 缓存 Step 1.5 研究结果和 Step 6 文档模板
+- 依赖变更/文件结构变更自动失效
+- **预期**：相似任务成本节省 20-30%
+
+**P2-3: 全流程 Thinking Level 审计** (`references/thinking-level-audit.md`)
+- 基于 100+ 任务历史数据的成本-质量分析
+- 优化建议：Step 1 high→medium, Step 1.5 review high→medium, Step 6 docs high→medium
+- A/B 测试验证 + 动态调整策略
+- 配置文件：workspace/thinking-level-config.json
+- **预期**：成本降低 8-12%，质量影响 <3%
+
+**P2-4: Step 1.5 依赖管理优化** (`references/step-1.5-dependencies.md`)
+- 部分并行执行：珊瑚 → 织梦（使用珊瑚输出）→ review → brainstorming
+- 依赖声明（YAML 配置）+ 拓扑排序
+- 可选任务失败优雅降级
+- **预期**：质量提升 10%，执行时间 12 分钟（vs 5 分钟完全并行）
+
+### 累计预期收益
+
+**质量提升**：
+- Step 5 失败率降低 30%
+- Epoch 成功率提升 15-20%
+- 分级准确率提升 20%
+- Step 1.5 质量提升 10%
+
+**成本优化**：
+- P0: 无效重试 -10-15%
+- P1: 预算控制 -10-15%
+- P2: 增量审查+缓存+Thinking Level -10-15%
+- **总计：30-40% 成本降低**
+
+**效率提升**：
+- Step 4 审查时间 -40%
+- 异常恢复时间 -50%
+- 告警信噪比 +50%
+
+### 实施状态
+
+所有优化方案的详细文档已完成，位于 `references/` 目录：
+- 冒烟测试、性能基准、异常分类（P0）
+- 分级模型、Epoch置信度、成本预算、告警分级（P1）
+- 增量审查、任务缓存、Thinking Level审计、依赖管理（P2）
+
+**下一步**：
+1. 更新所有 agent 的 AGENTS.md，确保了解新规范
+2. 实际任务测试验证
+3. 建立监控仪表板
+4. 持续优化（月度审计、季度校准）
