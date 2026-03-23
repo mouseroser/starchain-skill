@@ -439,19 +439,19 @@ main（小光）
 
 ### 核心原则
 
-sub-agent 执行 agent 自己推群（职能群 + 监控群），main 统一监控群兜底。
+sub-agent 只返回结果给 main，**不自己推群**。所有群通知由 main 统一发出。
 
 ### 根因
 
-`sessions_spawn` 的 isolated session 有 Telegram 群 binding，sub-agent 可直接调用 message 工具推群。工具配置已设为 `alsoAllow: [message]`。
+`sessions_spawn` 创建的 isolated session 默认没有 `message` 工具权限，配置干预也无法恢复。sub-agent 推群从架构上不可行。
 
 ### 通知类型（三类必须覆盖）
 
 | 类型 | 触发时机 | 发往 |
 |------|---------|------|
-| **START** | agent 开始执行本步骤时 | 职能群 + 监控群 |
-| **COMPLETION** | agent 完成本步骤时（含结果摘要） | 职能群 + 监控群 |
-| **FAILURE** | agent 遇到错误/卡点时 | 职能群 + 监控群 |
+| **START** | agent 开始执行本步骤时 | main 推送职能群 + 监控群 |
+| **COMPLETION** | agent 完成本步骤时（含结果摘要） | main 推送职能群 + 监控群 |
+| **FAILURE** | agent 遇到错误/卡点时 | main 推送职能群 + 监控群 |
 
 ### 通知内容要求
 - START/COMPLETION 必须包含：步骤名称、本步骤做了什么、下一步是什么
