@@ -175,7 +175,13 @@ main 自己完成：
 ### Step 4 — QA / Test
 - 代码 / 逻辑型任务 → `test`
 - UI / workflow / browser-visible 任务 → `qa-browser-check`
+- 交互结构还不稳的 UI / flow 任务，可在编码前按需插入 `design-review-lite`
 - 两者都需要时 → 先 `test` 再 `qa-browser-check`
+
+### Incident / constrained execution overlays
+按需叠加：
+- `guard-mode`：当任务需要目录边界、只读模式、config freeze、危险命令提醒时
+- `investigate-root-cause`：当任务本质上是根因调查，不应直接拍脑袋修时
 
 ### Step 5 — Docs / Delivery Prep
 - `docs` 按需触发
@@ -213,22 +219,30 @@ main 自己完成：
 - 已有成熟路径的重复性实现
 - 明显属于 L1
 
-## Agent Roles
+## Agent Roles / Plugin Suite
 
-- **main**：顶层编排、分级、补发通知、最终交付、Lite/Full 路由选择
+### Core plugins
 - **founder-office-hours**：产品打磨、wedge 判断、scope 收缩、build/shrink/defer 建议
 - **autoplan-lite**：L2 轻量规划、风险收敛、执行路径产出
+- **review-gate**：质量门 verdict
+
+### Conditional plugins
+- **qa-browser-check**：浏览器关键路径 QA
+- **release-retro**：交付后短复盘与沉淀
+- **guard-mode**：任务局部护栏、目录/配置/危险动作边界约束
+- **design-review-lite**：轻量产品/交互/页面流设计审查
+- **investigate-root-cause**：结构化根因调查与故障域收敛
+
+### Core orchestrators / lanes
+- **main**：顶层编排、分级、补发通知、最终交付、Lite/Full 路由选择
 - **gemini**：扫描、反方 review、一致性检查
 - **notebooklm**：历史知识 / 模板 / 经验补料
 - **openai**：宪法定稿、冲突仲裁
 - **claude**：主计划、主审查、复杂实现路径
 - **brainstorming**：Spec-Kit 四件套、方案智囊
 - **coding**：开发执行
-- **review-gate**：质量门 verdict
 - **test**：测试执行
-- **qa-browser-check**：浏览器关键路径 QA
 - **docs**：文档交付
-- **release-retro**：交付后短复盘与沉淀
 
 ## Model / Risk Rules
 
