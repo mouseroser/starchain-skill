@@ -1,96 +1,98 @@
 ---
 name: design-review-lite
-description: Run a lightweight product/design review inside StarChain before or alongside implementation planning. Use when a feature, UI flow, dashboard, settings page, information architecture, or interaction model needs a quick design sanity check for clarity, user friction, scope, consistency, and missing states without invoking a full design process.
+description: 在 StarChain 内，在实现前或实现旁路上做一轮轻量产品/设计审查。适用于功能、UI 流程、dashboard、设置页、信息架构或交互模型需要快速 快速合理性检查 的场景，用来检查清晰度、用户摩擦、范围、结构一致性与缺失状态，而不是拉起完整设计流程。
 ---
 
-# Design Review Lite
+# `design-review-lite`（轻量设计审查）
 
-Use this plugin to run a compact product/design sanity check.
+## 作用
 
-This is not a full design system review and not a high-fidelity UX process. It is a fast way to catch obvious interaction, clarity, flow, and state problems before implementation goes too far.
+用这项插件做一轮**轻量产品 / 设计 快速合理性检查**。
 
-## Good fits
+它不是完整设计系统评审，也不是高保真 UX 流程；它只是一个快速发现明显交互、清晰度、流程与状态问题的方法，避免实现一路跑偏。
 
-Use when the task involves:
-- UI screens
-- multi-step user flows
-- settings or dashboard information architecture
-- forms and validation UX
-- feature surfaces that may confuse users/operators
-- product scope that is functionally correct but may be awkward to use
+## 适用场景
 
-## Output contract
+适合：
+- UI 页面
+- 多步骤用户流程
+- 设置页 / dashboard 的信息架构
+- 表单与校验体验
+- 功能逻辑没错，但可能让用户 / 操作者迷惑的界面
+- 功能上说得通，但用起来可能别扭的产品 范围
 
-Produce a compact review with these sections:
-- Core user task
-- Main clarity risks
-- Flow friction points
-- Missing states / edge cases
-- Recommended simplifications
-- Design verdict
+## 输出合约
 
-## Review lens
+输出一份紧凑的评审结果，包含：
+- 核心用户任务
+- 主要清晰度风险
+- 流程摩擦点
+- 缺失状态 / 边界情况
+- 推荐简化项
+- 设计 判定
 
-Check for:
-- user goal clarity
-- unnecessary steps
-- confusing labels or structure
-- missing empty/loading/error states
-- overexposed options in v1
-- mismatch between business logic and user mental model
+## 审查视角
 
-## Default verdicts
+重点看：
+- 用户目标是否清晰
+- 是否存在多余步骤
+- 标签或结构是否让人误解
+- 是否缺 empty / loading / error 等状态
+- v1 是否暴露了过多选项
+- 业务逻辑与用户心智模型是否错位
 
-Use one of:
-- Good enough for build
-- Build but simplify first
-- Needs flow revision before build
-- Blocked on product decision
+## 默认 判定
 
-## Workflow
+可用这些判定：
+- 够用了，可以直接 build
+- 可以 build，但先做简化
+- 先修流程，再 build
+- 卡在产品决策上，暂时 blocked
 
-### Step 1 — Restate the user task
+## 工作流
 
-Describe what the user/operator is actually trying to achieve.
+### 步骤 1 — 重述用户任务
 
-### Step 2 — Walk the main flow
+先说清楚用户 / 操作者到底想完成什么。
 
-Ask:
-- what is the shortest path to success?
-- where could the user hesitate or misread?
-- what feels heavier than necessary?
+### 步骤 2 — 走一遍主流程
 
-### Step 3 — Check state coverage
+要问：
+- 达成目标的最短路径是什么？
+- 用户会在哪一步犹豫或误解？
+- 哪些地方明显比必要更重？
 
-Look for missing:
+### 步骤 3 — 检查状态覆盖
+
+重点找缺失的：
 - empty states
 - loading states
 - validation states
 - failure states
-- permission or blocked states
+- permission / blocked states
 
-### Step 4 — Simplify aggressively
+### 步骤 4 — 激进简化
 
-Prefer fewer:
-- controls
-- branches
-- fields
-- pages
-- choices
+默认偏向更少：
+- 控件
+- 分支
+- 字段
+- 页面
+- 选择项
 
-### Step 5 — Return a design verdict
+### 步骤 5 — 给出设计 判定
 
-End with a direct recommendation the main orchestrator can use.
+最后必须给 main 编排器一个**能直接拿去用**的设计建议。
 
-## Handoff guidance
+## 交接建议
 
-Use this plugin:
-- before coding for UI-heavy work
-- after `founder-office-hours` if product framing is solid but the interface shape still feels fuzzy
-- before `qa-browser-check` if the flow needs a structural sanity pass first
+适合在这些位置插入：
+- UI-heavy 工作的 coding 之前
+- `founder-office-hours` 之后，如果产品 framing 已清楚，但界面形状还虚
+- `qa-browser-check` 之前，如果需要先做一轮结构 sanity pass
 
-## Example triggers
+## 示例触发
 
-- “先帮我快速过一下这个页面/流程设计”
+- “先帮我快速过一下这个页面 / 流程设计”
 - “这个功能逻辑没问题，但交互可能还不顺”
-- “别上完整设计流程，先做一轮轻量设计评审”
+- “别上完整设计流程，先做一轮轻量设计审查”

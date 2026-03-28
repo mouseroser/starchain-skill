@@ -1,167 +1,168 @@
 ---
 name: autoplan-lite
-description: Create a lightweight multi-agent planning pass for medium-complexity product, coding, research, or workflow tasks. Use when a request is too important for a single quick answer but too small for a full starchain/xingjian pipeline, especially for L2 tasks that need scope shaping, challenge/constitution review, engineering planning, risk review, and a final executable plan.
+description: 为中等复杂度的产品、开发、研究或工作流任务生成一轮轻量多 agent 规划。适用于单次回答风险偏高、但又不值得拉满完整 starchain/xingjian 流水线的场景，尤其适合需要 范围 收缩、约束挑战、工程规划、风险复核与最终可执行计划的 L2 任务。
 ---
 
-# Autoplan Lite
+# `autoplan-lite`（轻量规划）
 
-## Overview
+## 作用
 
-Use this skill to turn a medium-complexity request into a compact, execution-ready plan without invoking a full heavyweight pipeline. The goal is to compress good product thinking, challenge, engineering planning, and risk review into one short multi-agent pass.
+用这项技能把“中等复杂度但不值得上完整重链”的任务，压缩成一份**短小、可执行、可直接开干**的计划。
 
-## When to run
+目标不是做厚重研究，而是把：
+- 产品判断
+- 约束挑战
+- 工程规划
+- 风险复核
 
-Use `autoplan-lite` when the task has enough ambiguity or impact that a single-pass answer is risky, but a full starchain-style deep pipeline would be overkill.
+压进一轮轻量多 agent 规划里。
 
-Good fits:
-- L2 feature work
-- medium-complexity coding tasks
-- workflow or automation design
-- product scoping with engineering implications
-- research-to-build tasks that need a practical plan
-- requests where scope, tradeoffs, and risks matter more than immediate implementation
+## 何时使用
 
-Do not use it for:
-- tiny edits or obvious one-step fixes
-- pure execution requests with no planning value
-- high-stakes or highly ambiguous work that needs the full constitution/research pipeline
-- tasks that are mostly external-operation execution rather than planning
+适合：
+- L2 功能规划
+- 中等复杂度开发任务
+- 工作流 / 自动化设计
+- 带工程影响的产品定 范围
+- 从研究走向实现、但还不值得上 full chain 的任务
+- 风险、取舍、边界比“马上开干”更重要的请求
 
-## Output contract
+不适合：
+- 极小改动或显然一步到位的修复
+- 纯执行请求、没有规划价值
+- 高风险 / 高不确定性、明显该走完整 Constitution / Research 主链的任务
+- 主要是外部执行，而不是规划的问题
 
-Produce one concise plan with these sections:
-- Goal
-- Scope in / scope out
-- Key assumptions
-- Main risks
-- Recommended execution path
-- Ordered task list
-- Open decisions for the human
+## 输出合约
 
-The final output should be short enough to act on immediately. Do not dump raw agent outputs. Synthesize.
+输出一份简洁计划，至少包含：
+- 目标
+- 范围内 / 范围外
+- 关键假设
+- 主要风险
+- 推荐执行路径
+- 有顺序的任务清单
+- 需要人确认的开放问题
 
-## Workflow
+最终输出要足够短，能让人立刻行动。不要堆原始 agent 回执，要做综合。
 
-### Step 1 — Frame the task
+## 工作流
 
-First, restate the task in operational terms:
-- what is being built, changed, or decided
-- what success looks like
-- what constraints are already known
-- whether this feels like L1, L2, or L3
+### 步骤 1 — 先把任务重新表述清楚
 
-If the task is actually L1, skip this skill and answer directly.
-If the task is actually L3, recommend escalating to a heavier pipeline.
+先把任务改写成可执行问题：
+- 到底要构建 / 修改 / 决定什么
+- 成功标准是什么
+- 已知约束是什么
+- 这更像 L1、L2 还是 L3
 
-### Step 2 — Run the four-pass lite review
+如果其实是 L1，就别用这项技能，直接处理。
+如果其实是 L3，就明确建议升级到更重的流水线。
 
-For a true L2 task, gather four compact perspectives in this order:
+### 步骤 2 — 跑四轮轻量评审
 
-1. **Scope scan**
-   - Use a fast model/agent to clarify the real problem, likely scope edges, missing context, and possible overbuild.
-   - Ask: what are we actually solving, what is the smallest useful version, and what should probably be excluded?
+对于真正的 L2 任务，按这个顺序拿四个紧凑视角：
 
-2. **Challenge / constitution pass**
-   - Use a stronger reasoning pass to test assumptions, surface hidden risks, and challenge weak framing.
-   - Ask: what could make this plan wrong, premature, or wasteful?
+1. **范围扫描**
+   - 澄清真实问题、范围边界、缺失上下文、可能的过度设计
+   - 问：我们到底在解什么？最小可用版本是什么？哪些内容应该先排除？
 
-3. **Engineering plan**
-   - Produce the practical implementation path.
-   - Ask: what sequence would a good builder follow, what dependencies matter, and where are the likely breakpoints?
+2. **挑战 / 宪法视角**
+   - 检查假设，暴露隐藏风险，挑战薄弱 framing
+   - 问：什么会让这份计划变错、过早、浪费？
 
-4. **Risk review**
-   - Review the plan for correctness, regression risk, incompleteness, testing gaps, and rollout hazards.
-   - Ask: what is most likely to break or be forgotten?
+3. **工程计划视角**
+   - 产出务实的实现路径
+   - 问：好的实现顺序是什么？依赖在哪里？最可能的断点在哪里？
 
-Keep each pass compact. The point is not exhaustive research. The point is better planning.
+4. **风险复核视角**
+   - 复核正确性、回归风险、不完整之处、测试缺口、上线隐患
+   - 问：最可能忘掉什么？最可能坏在哪里？
 
-## Default OpenClaw mapping
+每一轮都要短。重点不是穷举，而是把计划做对。
 
-Prefer this default mapping unless the current system state suggests a better substitution:
-- Scope scan → `gemini`
-- Challenge / constitution pass → `openai`
-- Engineering plan → `claude`
-- Risk review → `review`
-- Final synthesis → `main`
+## 默认 OpenClaw 映射
 
-If one agent is unavailable, substitute pragmatically and continue. Do not block the whole planning flow on one missing lane.
+默认优先这样分配：
+- 范围扫描 → `gemini`
+- 挑战 / 宪法视角 → `openai`
+- 工程计划 → `claude`
+- 风险复核 → `review`
+- 最终综合 → `main`
 
-## Main-session orchestration rules
+如果某条 lane 暂时不可用，务实替换，继续推进；不要因为一条 lane 缺席就卡死整个轻规划。
 
-When running this in the main session:
-- keep orchestration in `main`
-- use short prompts with explicit deliverables
-- serialize the four passes; do not parallelize unless there is a clear reason
-- carry forward only distilled findings, not full transcripts
-- after the four passes, synthesize one actionable plan in the main voice
+## 主会话编排规则
 
-## Prompting guidance for each pass
+在 main 会话里运行时：
+- 编排权留在 `main`
+- 每轮 prompt 要短，并明确交付物
+- 四轮默认串行，不要为了形式感并行
+- 向后传递的是提炼后的结论，不是全文 transcript
+- 四轮结束后，由 main 汇总成一份可执行计划
 
-### Scope scan prompt shape
+## 各轮提示关注点
 
-Ask for:
-- real problem statement
-- smallest viable scope
-- likely scope creep traps
-- missing context questions
+### 范围扫描
+重点要：
+- 真实问题定义
+- 最小可行范围
+- 可能的 范围膨胀 陷阱
+- 缺失上下文问题
 
-### Challenge / constitution prompt shape
+### 挑战 / 宪法视角
+重点要：
+- 脆弱假设
+- 隐藏取舍
+- 可能失败模式
+- 一个挑剔审查者会反对什么
 
-Ask for:
-- flawed assumptions
-- hidden tradeoffs
-- likely failure modes
-- objections from a skeptical reviewer
+### 工程计划
+重点要：
+- 推荐实现路径
+- 有顺序的步骤
+- 可能涉及的文件 / 系统区域
+- 依赖、测试与验证路径
 
-### Engineering plan prompt shape
+### 风险复核
+重点要：
+- 正确性担忧
+- 回归风险
+- 完整性缺口
+- 上线或 QA 要求
 
-Ask for:
-- recommended implementation approach
-- ordered steps
-- file/system areas likely involved
-- dependencies, tests, and validation path
+## 综合规则
 
-### Risk review prompt shape
+最终答案不能像四条 agent 消息拼起来。必须综合成一份计划。
 
-Ask for:
-- correctness concerns
-- regression risk
-- completeness gaps
-- rollout or QA requirements
+优先级：
+1. 清晰
+2. 顺序
+3. 风险可见性
+4. 开放问题明确
 
-## Synthesis rules
+如果人类拿到这份计划，基本不用再开一轮规划会，就说明输出达标。
 
-The final answer should not read like four stitched agent messages. Convert the passes into one plan.
+## 升级规则
 
-Prioritize:
-1. clarity
-2. sequencing
-3. risk visibility
-4. explicit open questions
+满足任一条，就从 `autoplan-lite` 升级出去：
+- 任务膨胀成多系统架构问题
+- 外部研究变成主要瓶颈
+- 出现明显的策略 / 安全 / 生产级后果
+- 晨星明确要求完整正式流水线
 
-If the human can plausibly act without another planning round, the output is good enough.
+这时应升级到 starchain、星鉴，或更重的定制规划链。
 
-## Escalation rules
+## 示例触发
 
-Escalate out of `autoplan-lite` when:
-- the task expands into multi-system architecture or deep uncertainty
-- external research becomes the bottleneck
-- there are major policy, safety, or production consequences
-- the human clearly wants a full formal pipeline
-
-In those cases, recommend starchain, xingjian, or a deeper custom plan.
-
-## Example use cases
-
-Example triggers:
 - “先给我一个实现这个功能的靠谱方案，不要直接开干”
-- “这个需求值不值得做，怎么收 scope 最合理？”
+- “这个需求值不值得做，怎么收 范围 最合理？”
 - “帮我规划一下这个中等复杂度改造，别上 full pipeline”
 - “先做一个多 agent 的轻量计划，再决定要不要开发”
 
-## Near-term evolution
+## 近期演进方向
 
-Once the first version is stable, extend it carefully with:
-- optional `founder-office-hours` prelude for product framing
-- optional `qa-browser-check` recommendation for UI workflows
-- tighter handoff format into coding/review execution lanes
+当第一版稳定后，可以谨慎扩展：
+- 按需插入 `founder-office-hours` 作为产品打磨前置层
+- 对 UI / workflow 任务，按需给出 `qa-browser-check` 建议
+- 与 coding / review 执行 lane 做更紧的交接格式

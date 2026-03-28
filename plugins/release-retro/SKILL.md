@@ -1,100 +1,106 @@
 ---
 name: release-retro
-description: Run a short structured retrospective after a release, delivery cycle, or significant task batch. Use when work has shipped or completed and the next step is to extract what worked, what failed, what repeated, what should become a template or learning, and what should change before the next run.
+description: 在一次发布、交付周期或一组重要任务完成后，做一轮简短结构化复盘。适用于工作已经真正结束，下一步是提炼哪些做法有效、哪些失败重复出现、哪些值得模板化或沉淀成经验，以及下次运行前该改什么。
 ---
 
-# Release Retro
+# `release-retro`（交付后短复盘）
 
-## Overview
+## 作用
 
-Use this skill to turn “let’s do a quick retro” into a compact operational review. The goal is not ceremonial reflection. The goal is to extract reusable learnings, identify repeat failure patterns, decide what should change next time, and route high-value learnings into memory, `.learnings`, or follow-up skills.
+把“来做个 quick retro”变成一份**简短但有行动价值**的运营复盘。
 
-## Good fits
+目标不是仪式化反思，而是：
+- 提炼可复用经验
+- 识别重复失败模式
+- 决定下次要改什么
+- 把高价值结论路由进 memory、`.learnings` 或 skill 优化
 
-Use this skill for:
-- after a release or deploy
-- after a multi-step delivery workflow
-- after a batch of related tasks
-- after a painful failure/recovery sequence
-- after a process experiment worth evaluating
+## 适用场景
 
-Do not use it for:
-- tasks that have not actually completed a meaningful cycle
-- raw status reporting before results are visible
-- generic journaling with no operational takeaway
+适合：
+- 一次 release / deploy 之后
+- 一条多步骤交付链跑完之后
+- 一批相关任务完成之后
+- 一次痛苦的失败 / 恢复序列之后
+- 一次值得评估的流程实验之后
 
-## Output contract
+不适合：
+- 任务还没真正跑完一个完整周期
+- 结果尚不可见时的原始 status reporting
+- 没有运营含义的泛泛 journaling
 
-Produce a concise retro with these sections:
-- What happened
-- What worked
-- What hurt
-- Repeated patterns
-- What should change next time
-- What to record or promote
-- Immediate follow-ups
+## 输出合约
 
-## Core lens
+输出一份简洁复盘，包含：
+- 发生了什么
+- 什么做得对
+- 什么让人受伤
+- 哪些模式在重复
+- 下次应该改什么
+- 哪些值得记录或提升
+- 立刻要跟进什么
 
-Focus on operational usefulness:
-- what made this go faster?
-- what created avoidable friction?
-- what failed more than once?
-- what should become a checklist, skill, or durable learning?
-- what should be stopped, not optimized?
+## 核心视角
 
-Prefer concrete behavior change over abstract reflection.
+优先看运营价值：
+- 什么让这次变快了？
+- 什么制造了本可避免的摩擦？
+- 什么失败不止一次？
+- 什么值得变成 checklist、skill 或长期经验？
+- 什么应该停止，而不是继续优化？
 
-## Workflow
+默认偏向：**行为改变**，不是抽象感想。
 
-### Step 1 — Bound the retro
+## 工作流
 
-Define the unit being reviewed:
-- one release
-- one workflow run
-- one cluster of related tasks
-- one failure-and-fix cycle
+### 步骤 1 — 先界定复盘单元
 
-### Step 2 — Reconstruct the outcome
+明确这次复盘的单位是什么：
+- 一次发布
+- 一条工作流运行
+- 一组相关任务
+- 一次失败到修复的完整周期
 
-Summarize:
-- intended outcome
-- actual outcome
-- main detours or incidents
-- whether the result was worth the effort
+### 步骤 2 — 重建结果
 
-### Step 3 — Extract leverage and pain
+简要说明：
+- 预期结果
+- 实际结果
+- 主要绕路 / 事故
+- 这次结果值不值得付出这些成本
 
-List the few items that mattered most:
-- what clearly helped
-- what clearly hurt
-- what repeated from earlier runs
+### 步骤 3 — 提炼杠杆与痛点
 
-### Step 4 — Convert observations into actions
+只抓最重要的少数项：
+- 明显帮到推进的
+- 明显拖慢或伤害的
+- 从旧运行里再次出现的
 
-Route each high-value insight into one of these buckets:
+### 步骤 4 — 把观察转成动作
+
+把每条高价值结论路由到这些桶之一：
 - durable memory
-- `.learnings` entry
-- checklist addition
-- skill improvement
-- next-run heuristic
-- explicit “do not repeat” rule
+- `.learnings` 条目
+- checklist 补充
+- skill 改进
+- 下次运行启发式
+- 明确的“不要再重复”规则
 
-### Step 5 — Keep the retro decision-oriented
+### 步骤 5 — 让复盘以决策收尾
 
-End with changes for the next run, not just observations about the last run.
+结尾必须落到“下次怎么改”，而不是停在“上次发生了什么”。
 
-## Promotion guidance
+## 提升 / 沉淀建议
 
-Promote items when they are:
-- likely to recur
-- costly when forgotten
-- broadly useful across runs
-- specific enough to change behavior
+当一条结论满足这些条件时，应主动提升：
+- 很可能再次出现
+- 忘掉成本很高
+- 跨运行普适
+- 足够具体，能改变行为
 
-Do not promote one-off noise.
+不要把一次性噪音也升格。
 
-## Example triggers
+## 示例触发
 
 - “做个 release retro”
 - “这次流程跑完了，帮我提炼下次该怎么改”

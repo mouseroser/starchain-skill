@@ -1,47 +1,49 @@
 ---
 name: investigate-root-cause
-description: Run a structured root-cause investigation inside StarChain for bugs, regressions, flaky workflows, production incidents, or recurring failures. Use when the task is not just to patch symptoms but to identify the real failure mechanism, narrow the fault domain, test candidate causes, and recommend the smallest durable fix.
+description: 在 StarChain 内做结构化根因调查，适用于 bug、回归、波动工作流、生产事故或重复失败。重点不是快速补症状，而是定位真实失效机制、缩小故障域、比较候选原因，并给出最小但耐久的修复方案。
 ---
 
-# Investigate Root Cause
+# `investigate-root-cause`（根因调查）
 
-Use this plugin when a bug or failure should be diagnosed systematically instead of patched by guesswork.
+## 作用
 
-The goal is to identify the failure mechanism, not merely make the error disappear once.
+当一个 bug 或故障不该靠拍脑袋修时，用这项插件做**结构化根因调查**。
 
-## Good fits
+目标是找到失败机制，而不是让错误“这次先消失”。
 
-Use when dealing with:
-- recurring bugs
-- regressions after recent changes
-- flaky workflows
-- production incidents
-- failures with multiple plausible causes
-- situations where a quick patch may hide the real issue
+## 适用场景
 
-## Output contract
+适合：
+- 重复出现的 bug
+- 最近改动后的回归
+- 时好时坏的工作流
+- 生产事故
+- 有多个 plausible cause 的故障
+- 快速补丁可能会掩盖真实问题的场景
 
-Produce an investigation brief with these sections:
-- Symptom
-- Most likely fault domain
-- Candidate root causes
-- Evidence for / against
-- Recommended next probe or fix
-- Confidence level
+## 输出合约
 
-## Investigation workflow
+输出一份调查摘要，包含：
+- 症状
+- 最可能的故障域
+- 候选根因
+- 支持 / 反对证据
+- 推荐下一探针或修复
+- 置信度
 
-### Step 1 — Define the symptom precisely
+## 调查工作流
 
-State:
-- what failed
-- where it failed
-- what was expected
-- what was observed instead
+### 步骤 1 — 精确定义症状
 
-### Step 2 — Bound the fault domain
+说明：
+- 失败了什么
+- 在哪里失败
+- 预期是什么
+- 实际看到的是什么
 
-Narrow the likely area:
+### 步骤 2 — 缩小故障域
+
+先把大概率区域收窄到：
 - UI
 - API
 - database
@@ -51,39 +53,40 @@ Narrow the likely area:
 - external dependency
 - orchestration / prompt / task contract
 
-### Step 3 — Generate candidate causes
+### 步骤 3 — 列候选原因
 
-Prefer a short ranked list over a long brainstorming dump.
+宁可给一个**短而排序过**的候选列表，也不要给一长串脑暴垃圾。
 
-### Step 4 — Compare evidence
+### 步骤 4 — 比较证据
 
-For each candidate, ask:
-- what evidence supports it?
-- what evidence weakens it?
-- what single probe would most reduce uncertainty?
+对每个候选原因，都问：
+- 什么证据支持它？
+- 什么证据削弱它？
+- 再做哪一个单探针最能降低不确定性？
 
-### Step 5 — Recommend smallest durable fix
+### 步骤 5 — 推荐最小耐久修复
 
-Do not jump to the biggest rewrite.
-Choose the smallest fix that addresses the confirmed mechanism.
+不要一上来就建议大重写。
 
-## Escalation rules
+优先选择那个**最小、但真正作用在失效机制上**的修复。
 
-Escalate when:
-- the symptom crosses subsystems
-- the logs/evidence are insufficient to rank causes
-- a destructive probe would be needed
-- the issue keeps reappearing after multiple symptom-level fixes
+## 升级规则
 
-## Handoff guidance
+满足这些情况要升级：
+- 症状跨多个子系统
+- 日志 / 证据不足以给候选原因排序
+- 继续验证需要 destructive probe
+- 问题已经被多次症状级修复，但仍不断复发
 
-Use this plugin:
-- before coding when the cause is unclear
-- before `review-gate` if the implementation is really a diagnosis task
-- with `guard-mode` when prod/risky investigation needs a constrained scope
-- before `release-retro` if the failure taught something reusable
+## 交接建议
 
-## Example triggers
+适合插在这些位置：
+- coding 之前，如果原因还不清楚
+- `review-gate` 之前，如果当前任务本质是诊断而不是实现
+- 搭配 `guard-mode` 使用，在生产 / 高风险调查时限制范围
+- `release-retro` 之前，如果这次故障值得抽象成长期经验
+
+## 示例触发
 
 - “别先修，先判断根因”
 - “这个问题总反复出现，帮我做根因调查”

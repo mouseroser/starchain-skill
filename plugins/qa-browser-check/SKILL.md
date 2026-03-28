@@ -1,111 +1,120 @@
 ---
 name: qa-browser-check
-description: Run a focused browser-based QA pass for UI, workflow, and end-to-end tasks. Use when changes affect screens, user flows, publishing steps, forms, dashboards, login-dependent workflows, or automation that must be validated through the browser, especially after review-gate or before release.
+description: 对 UI、工作流与端到端任务做一轮聚焦的浏览器 QA。适用于改动影响页面、用户流程、发布步骤、表单、看板、依赖登录态的工作流，或必须通过浏览器验证的自动化链路，尤其适合在 review-gate 之后或 release 之前使用。
 ---
 
-# QA Browser Check
+# `qa-browser-check`（浏览器 QA）
 
-## Overview
+## 作用
 
-Use this skill to turn “please test it in the browser” into a focused QA pass with explicit target flows, expected outcomes, and bug reporting. The job is not broad exploration. The job is to validate the key path, catch regressions, and return clear failure evidence with next actions.
+把“去浏览器里测一下”变成一轮**有目标流程、有预期结果、有失败证据**的聚焦 QA。
 
-## Good fits
+目标不是广泛乱点，而是：
+- 验证关键路径
+- 抓关键回归
+- 返回清晰的失败证据与下一步建议
 
-Use this skill for:
-- UI changes
-- multi-step workflows
-- browser-visible feature delivery
-- dashboards, forms, and settings pages
-- publishing or creator workflows
-- login-dependent checks where local browser state matters
+## 适用场景
 
-Do not use it for:
-- backend-only changes with no browser-visible behavior
-- conceptual review with no runnable flow
-- broad exploratory testing with no defined target path
+适合：
+- UI 改动
+- 多步骤工作流
+- 浏览器可见的功能交付
+- dashboard、表单、设置页
+- 发布 / 创作者工作流
+- 依赖登录态、本机浏览器状态的检查
 
-## Output contract
+不适合：
+- 完全无浏览器可见行为的后端改动
+- 没有可运行路径的概念评审
+- 没有目标路径定义的宽泛 exploratory testing
 
-Produce a QA note with these sections:
-- Target flow
-- Environment / browser path used
-- Result
-- Evidence
-- Bugs found
-- Recommended next step
+## 输出合约
 
-Possible results:
+输出一份 QA 说明，包含：
+- 目标流程
+- 使用的环境 / 浏览器路径
+- 结果
+- 证据
+- 发现的问题
+- 推荐下一步
+
+允许结果：
 - Pass
-- Pass with caveats
+- 通过，但有注意事项
 - Fail
-- Blocked by environment
+- 被环境阻塞
 
-## Testing principle
+## 测试原则
 
-Prefer one strong, realistic user flow over many shallow clicks.
+宁可验证**一条强而真实的主路径**，也不要做很多浅层点击。
 
-The check should answer:
-- can the intended user complete the key flow?
-- does the observed behavior match the reviewed plan?
-- where exactly does it break?
-- what should the builder fix first?
+这轮检查应该回答：
+- 目标用户能不能完成关键流程？
+- 实际行为是否符合已审过的计划？
+- 具体在哪一步坏掉？
+- 构建者最应该先修哪里？
 
-## Workflow
+## 工作流
 
-### Step 1 — Define the target flow
+### 步骤 1 — 先定义目标流程
 
-Before clicking anything, write down:
-- start state
-- user goal
-- critical path steps
-- expected result
+动手点之前，先写清楚：
+- 起始状态
+- 用户目标
+- 关键路径步骤
+- 预期结果
 
-If there is no clear target flow, ask for one or infer the most business-critical path.
+如果没有清晰目标流程，就要求补充，或者推断业务上最关键的一条路径。
 
-### Step 2 — Pick the right browser context
+### 步骤 2 — 选对浏览器上下文
 
-Prefer the existing OpenClaw browser stack.
-Use the logged-in user/browser profile when cookies, sessions, or creator-platform access matter.
-Do not switch browser stacks without a reason.
+优先使用现有 OpenClaw 浏览器栈。
 
-### Step 3 — Validate the main path
+如果 cookies、会话、创作者平台权限很重要，优先使用**已登录用户浏览器 / profile**。
 
-Run the shortest realistic sequence that proves or disproves the feature.
-Capture:
-- where the flow starts
-- key interaction points
-- observed outputs or failures
+没有充分理由，不要随意切换浏览器栈。
 
-### Step 4 — Check the most likely regression edge
+### 步骤 3 — 验证主路径
 
-After the main path, test the single most likely adjacent failure:
-- validation edge case
-- state persistence issue
-- wrong redirect
-- missing save/apply action
-- modal/dialog/permission break
+跑最短但真实的一段序列，用来证明或证伪功能。
 
-### Step 5 — Report crisply
+记录：
+- 从哪开始
+- 关键交互点
+- 看到的结果或失败
 
-If the flow passes, say what was proven.
-If it fails, report:
-- exact failing step
-- expected vs actual behavior
-- visible error or broken state
-- likely fix direction if obvious
+### 步骤 4 — 检查最可能的回归边
 
-## Bug reporting rules
+主路径之后，只补测**一个最可能的相邻失败点**：
+- 表单校验边界
+- 状态持久化问题
+- 错误跳转
+- 漏掉 save / apply
+- modal / dialog / permission 断裂
 
-A good QA bug report includes:
-- page or flow name
-- exact step that failed
-- expected behavior
-- actual behavior
-- severity on the target flow
+### 步骤 5 — 清晰汇报
 
-Avoid vague reports like “seems broken.”
+如果通过，要说清楚通过了什么。
 
-## Example triggers
+如果失败，要明确：
+- 失败的精确步骤
+- 预期行为 vs 实际行为
+- 可见错误或破损状态
+- 如果明显，给出修复方向
+
+## 缺陷汇报规则
+
+一条好的 QA bug 报告至少包含：
+- 页面 / 流程名
+- 失败的精确步骤
+- 预期行为
+- 实际行为
+- 对目标流程的严重性
+
+避免“感觉坏了”这种模糊说法。
+
+## 示例触发
 
 - “帮我做一次 browser QA”
 - “这个 UI 改动过 review 了，再跑一遍关键路径”

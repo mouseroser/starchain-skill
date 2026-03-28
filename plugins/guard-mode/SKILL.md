@@ -1,98 +1,100 @@
 ---
 name: guard-mode
-description: Add task-local execution guardrails inside StarChain. Use when a coding, review, debugging, production, or repo-change task needs temporary safety constraints such as allowed directories, read-only review mode, config freeze, destructive-command warning, or restricted scope editing. Best for large repos, production troubleshooting, sensitive config areas, and ACP/coding sessions where bounded action matters more than speed.
+description: 在 StarChain 内为任务添加局部执行护栏。适用于编码、审查、调试、生产排障或仓库变更任务需要临时安全边界的场景，例如限制可改目录、只读审查、冻结配置、危险命令预警或限定子系统范围。尤其适合大仓库、生产故障排查、敏感配置区域，以及 ACP/coding 会话中“边界比速度更重要”的任务。
 ---
 
-# Guard Mode
+# `guard-mode`（局部护栏）
 
-Use this plugin to impose **temporary execution boundaries** on a StarChain run.
+## 作用
 
-The goal is not to replace system safety rules. The goal is to add task-local guardrails so the run stays inside the intended blast radius.
+这项插件用于给一条 StarChain 任务临时加上**执行边界**。
 
-## Good fits
+目标不是替代系统级安全规则，而是增加任务局部护栏，让运行始终留在允许的爆炸半径内。
 
-Use when the task needs one or more of these constraints:
-- only edit a specific directory
-- read-only review mode
-- do not touch config
-- do not touch deployment/runtime files
-- warn before destructive commands
-- freeze scope to a small subsystem
-- production debugging where observation is allowed but mutation is tightly bounded
+## 适用场景
 
-## Output contract
+当任务需要这些约束之一时使用：
+- 只允许改某个目录
+- 只读审查
+- 不允许碰配置
+- 不允许碰部署 / runtime 文件
+- 危险命令先预警
+- 将 范围 冻在一个小子系统
+- 生产排障中只允许观察，不允许随意变更
 
-Produce a short guard profile with these sections:
-- Allowed scope
-- Forbidden scope
-- Edit policy
-- Command policy
-- Escalation triggers
-- Exit condition
+## 输出合约
 
-## Guard profiles
+输出一份简短 护栏配置，包含：
+- 允许范围
+- 禁止范围
+- 编辑策略
+- 命令策略
+- 升级触发条件
+- 退出条件
 
-### Directory-bound edit mode
-Use when only one app/module/path may be changed.
+## 常见护栏模板
 
-Define:
-- allowed directories
-- forbidden directories
-- whether file creation is allowed
-- whether rename/delete is allowed
+### 目录绑定编辑模式
+当只允许修改某一 app / module / path 时使用。
 
-### Read-only review mode
-Use when the task is analysis/review only.
+需要定义：
+- 允许目录
+- 禁止目录
+- 是否允许新建文件
+- 是否允许 rename / delete
 
-Define:
-- no file edits
-- no write commands
-- no config mutation
-- output must be findings only
+### 只读审查模式
+当任务只允许分析 / review 时使用。
 
-### Config freeze mode
-Use when code changes are allowed but config changes are not.
+需要定义：
+- 不允许文件编辑
+- 不允许 write 命令
+- 不允许 config 变更
+- 输出只能是 findings
 
-Define:
-- config paths frozen
-- schema or runtime settings frozen
-- env/secret/config files off limits
+### 配置冻结模式
+当允许改代码，但不允许改配置时使用。
 
-### Destructive-warning mode
-Use when cleanup, migrations, resets, or deletes are in scope.
+需要定义：
+- config 路径冻结
+- schema / runtime 设置冻结
+- env / secret / config 文件禁改
 
-Define:
-- warn before destructive actions
-- prefer non-destructive inspection first
-- require an explicit go/no-go checkpoint before the destructive step
+### 危险动作预警模式
+当清理、迁移、重置、删除等动作可能进入范围时使用。
 
-## Default policy language
+需要定义：
+- 危险动作前先提醒
+- 优先非破坏性检查
+- 在真正 destructive 之前必须有显式 go / no-go 检查点
 
-State guardrails clearly and operationally:
-- only edit `X`
-- do not modify `Y`
-- treat `Z` as read-only
-- warn before delete/reset/migrate operations
-- stop and escalate if the task expands beyond the allowed scope
+## 默认策略写法
 
-## Escalation rules
+护栏语言要写得**短、清楚、可执行**：
+- 只允许修改 `X`
+- 不要改 `Y`
+- 把 `Z` 当成只读
+- delete / reset / migrate 之前先预警
+- 如果任务膨胀到允许范围外，立即停止并升级
 
-Escalate or pause when:
-- the root cause is outside the allowed scope
-- a forbidden directory must change to finish the task
-- the task changes from review to mutation
-- a destructive action becomes necessary
-- the requested scope is internally inconsistent
+## 升级规则
 
-## Handoff guidance
+满足以下情况要升级或暂停：
+- 根因在允许范围外
+- 要完成任务必须修改禁止目录
+- 任务从审查变成实际变更
+- 必须做危险动作
+- 请求本身存在相互矛盾的边界
 
-When used inside StarChain:
-- apply `guard-mode` before coding or investigation begins
-- include the guard profile in the spawned task prompt
-- keep the profile short and concrete
-- if the guard profile blocks completion, return the smallest necessary scope expansion request
+## 交接规则
 
-## Example triggers
+在 StarChain 内使用时：
+- 在 coding 或 root-cause investigation 开始前先套上 `guard-mode`
+- 把 护栏配置 直接写进 spawned task prompt
+- profile 要短而具体
+- 如果 profile 阻止了完成，就返回最小必要的 范围 扩张请求
+
+## 示例触发
 
 - “这次只准改 apps/web”
 - “先只读审查，不要动代码”

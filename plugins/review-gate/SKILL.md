@@ -1,100 +1,106 @@
 ---
 name: review-gate
-description: Run a stricter post-build review gate before declaring a task done. Use when code, workflow logic, automation, or configuration changes need a structured review for correctness, regression risk, completeness, testing gaps, and rollout concerns, especially after coding work and before QA, docs sync, or release.
+description: 在宣称任务完成之前，先跑一轮更严格的构建后质量门。适用于代码、工作流逻辑、自动化或配置变更需要被结构化审查正确性、回归风险、完整性、测试缺口与上线风险的场景，尤其是在 coding 之后、QA 之前、文档同步之前或 release 之前使用。
 ---
 
-# Review Gate
+# `review-gate`（质量门）
 
-## Overview
+## 作用
 
-Use this skill to convert a loose “please review this” into a clear go/no-go quality gate. The review should not stop at style or surface comments. It should decide whether the work is actually correct, complete enough, safe enough to continue, and what must happen next.
+把松散的“帮我 review 一下”变成一个清晰的**能不能继续往下走**的质量门。
 
-## Good fits
+重点不是风格评论，而是判断：
+- 这次改动到底对不对
+- 是否足够完整
+- 是否足够安全继续推进
+- 下一步必须是什么
 
-Use this skill for:
-- completed coding tasks
-- workflow or automation changes
-- configuration edits with operational risk
-- UI or product work before QA/browser checks
-- any task where “looks done” is not a reliable standard
+## 适用场景
 
-Do not use it for:
-- brainstorming before code exists
-- trivial typo-only changes
-- tasks where the only review needed is proofreading
+适合：
+- 已完成的 coding 任务
+- 工作流 / 自动化变更
+- 带运营风险的配置修改
+- 在 QA / browser check 前的 UI 或产品改动
+- 任何“看起来像做完了”但实际上不能只凭感觉判断的任务
 
-## Output contract
+不适合：
+- 代码还没开始前的 brainstorming
+- 只改了错别字的 trivial 修改
+- 只需要校对文字的任务
 
-Produce a concise review gate result with these sections:
-- Verdict
-- What was reviewed
-- Correctness concerns
-- Regression risks
-- Completeness gaps
-- Required tests or validations
-- Recommended next step
+## 输出合约
 
-Use verdicts such as:
+输出一份简洁的质量门结果，包含：
+- Verdict（判定）
+- 审查了什么
+- 正确性担忧
+- 回归风险
+- 完整性缺口
+- 必需测试 / 验证
+- 推荐下一步
+
+允许判定：
 - Pass
-- Pass with follow-ups
-- Needs fixes before QA
+- 通过，但有后续项
+- QA 前需先修复
 - Blocked
 
-## Review standard
+## 审查标准
 
-Review for:
-- correctness
-- regression risk
-- hidden side effects
-- missing edge cases
-- mismatch between requested scope and delivered scope
-- validation and test coverage gaps
-- rollout or operational hazards
+重点看：
+- 正确性
+- 回归风险
+- 隐藏副作用
+- 缺失边界情况
+- 请求范围与交付范围是否错位
+- 验证与测试覆盖是否不足
+- 上线 / 运行风险
 
-Do not optimize for politeness over truth.
+不要为了礼貌牺牲判断。
 
-## Workflow
+## 工作流
 
-### Step 1 — Restate the intended outcome
+### 步骤 1 — 先重述目标结果
 
-State what the change claims to accomplish and what success should mean.
+说明这次改动声称解决什么问题，什么才算成功。
 
-### Step 2 — Inspect for correctness
+### 步骤 2 — 检查正确性
 
-Ask:
-- does the change actually solve the stated problem?
-- are there logic holes or broken assumptions?
-- does the implementation contradict constraints or prior architecture?
+要问：
+- 它真的解决了目标问题吗？
+- 有没有逻辑漏洞或错误假设？
+- 是否违反已有约束或架构？
 
-### Step 3 — Inspect for regression risk
+### 步骤 3 — 检查回归风险
 
-Ask:
-- what nearby behavior could break?
-- what existing flows depend on these files or decisions?
-- what is fragile or easy to overlook?
+要问：
+- 哪些相邻行为可能被打坏？
+- 哪些现有流程依赖这些文件或决策？
+- 哪些点最脆弱、最容易漏？
 
-### Step 4 — Inspect for completeness
+### 步骤 4 — 检查完整性
 
-Ask:
-- is any required follow-up missing?
-- are docs, tests, migrations, prompts, or configs out of sync?
-- was the request partially fulfilled but reported as complete?
+要问：
+- 有没有必要的后续没做？
+- docs、tests、migrations、prompts、configs 是否不同步？
+- 有没有“部分完成却被报成完成”？
 
-### Step 5 — Decide the gate
+### 步骤 5 — 给出质量门判定
 
-Choose one clear verdict.
+必须给一个明确 判定。
 
-If the work should continue to QA, say exactly what QA must verify.
-If it should go back to coding, say exactly what must be fixed first.
+如果可以进入 QA，要明确 QA 该重点验证什么。
+如果必须回到 coding，要明确必须先修什么。
 
-## Handoff rules
+## 交接规则
 
-When sending work onward:
-- to QA: include the highest-risk user flow and the most likely failure mode
-- to docs: include what changed and what users/operators must now know
-- back to coding: include the smallest fix list that would change the verdict
+往下交接时：
+- 给 QA：写清楚最高风险用户路径 + 最可能失败模式
+- 给 Docs：写清楚这次改变了什么、用户 / 操作者现在要知道什么
+- 退回 Coding：给出最小必要修复清单，说明什么改完就能改变 判定
 
-## Example triggers
+## 示例触发
 
 - “帮我过一遍这个改动，看能不能进下一步”
 - “别只看 diff，帮我做一次真正的 review gate”

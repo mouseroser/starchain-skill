@@ -8,8 +8,8 @@
 
 ### v2.7 主要改进（相比 v2.6）
 
-1. **Launcher Script 模式**：Main 不再在私聊里串联所有步骤，改用 `starchain-launcher.sh` 一键启动
-2. **NotebookLM 深度研究**：Step 1.5S 增加 NotebookLM 深度研究环节，提供历史经验和实施建议
+1. **启动脚本 模式**：Main 不再在私聊里串联所有步骤，改用 `starchain-launcher.sh` 一键启动
+2. **NotebookLM 深度研究**：步骤 1.5S 增加 NotebookLM 深度研究环节，提供历史经验和实施建议
 3. **统一独立性规则**：与星鉴流水线统一仲裁独立性规则
 4. **主私聊不占线**：符合"主私聊不承载长编排"约束
 
@@ -22,28 +22,28 @@
 
 ---
 
-## 架构：Launcher Script 模式
+## 架构：启动脚本 模式
 
 ```
 main（小光）
 └── exec ~/.openclaw/skills/starchain/scripts/starchain-launcher.sh "<任务>" <L1|L2|L3> [project-path]
-    ├── Step 1：任务分级 + 类型分析（脚本记录）
-    ├── Step 1.5：Constitution-First 打磨层
+    ├── 步骤 1：任务分级 + 类型分析（脚本记录）
+    ├── 步骤 1.5：Constitution-First 打磨层
     │   ├── openclaw agent --agent gemini → 扫描
     │   ├── openclaw agent --agent openai → 宪法
     │   ├── openclaw agent --agent claude → 计划
     │   ├── openclaw agent --agent gemini → 一致性复核
     │   └── openclaw agent --agent openai/claude → 仲裁（按需）
-    ├── Step 1.5S：NotebookLM 深度研究 + Spec-Kit 落地
+    ├── 步骤 1.5S：NotebookLM 深度研究 + Spec-Kit 落地
     │   ├── openclaw agent --agent notebooklm → 历史经验查询
     │   └── openclaw agent --agent brainstorming → Spec-Kit 四件套
-    ├── Step 2：openclaw agent --agent coding → 开发（含 Step 2.5 冒烟）
-    ├── Step 3：并行 spawn claude + gemini → 双审
-    ├── Step 4：循环修复（max 3 rounds）
-    ├── Step 5：openclaw agent --agent test → 测试
-    ├── Step 5.5：Epoch 诊断与仲裁（按需）
-    ├── Step 6：openclaw agent --agent docs → 文档
-    └── Step 7：main 汇总交付 + 通知晨星
+    ├── 步骤 2：openclaw agent --agent coding → 开发（含 步骤 2.5 冒烟）
+    ├── 步骤 3：并行 spawn claude + gemini → 双审
+    ├── 步骤 4：循环修复（max 3 rounds）
+    ├── 步骤 5：openclaw agent --agent test → 测试
+    ├── 步骤 5.5：Epoch 诊断与仲裁（按需）
+    ├── 步骤 6：openclaw agent --agent docs → 文档
+    └── 步骤 7：main 汇总交付 + 按条件通知晨星
 
 **优势**：
 - Main 不在私聊里等待和轮询
@@ -55,7 +55,7 @@ main（小光）
 
 ## 流程详解
 
-### Step 1: 任务分级与类型分析
+### 步骤 1: 任务分级与类型分析
 
 **执行者**: Main（小光）  
 **输入**: 用户需求  
@@ -75,9 +75,9 @@ main（小光）
 
 ---
 
-### Step 1.5: Constitution-First 打磨层
+### 步骤 1.5: Constitution-First 打磨层
 
-#### Step 1.5A: Gemini 扫描
+#### 步骤 1.5A: Gemini 扫描
 
 **执行者**: Gemini（织梦）  
 **模型**: `gemini/gemini-3.1-pro-preview`  
@@ -90,7 +90,7 @@ main（小光）
 
 **保存位置**: `~/.openclaw/workspace/agents/gemini/reports/scan-YYYYMMDD_HHMMSS.md`
 
-#### Step 1.5B: OpenAI 宪法
+#### 步骤 1.5B: OpenAI 宪法
 
 **执行者**: OpenAI（GPT-5.4）  
 **模型**: `openai/gpt-5.4`  
@@ -105,7 +105,7 @@ main（小光）
 
 **保存位置**: `~/.openclaw/workspace/agents/openai/reports/constitution-YYYYMMDD_HHMMSS.md`
 
-#### Step 1.5C: Claude 计划
+#### 步骤 1.5C: Claude 计划
 
 **执行者**: Claude（小克）  
 **模型**: `anthropic/claude-opus-4-6`  
@@ -119,7 +119,7 @@ main（小光）
 
 **保存位置**: `~/.openclaw/workspace/agents/claude/reports/plan-YYYYMMDD_HHMMSS.md`
 
-#### Step 1.5D: Gemini 一致性复核
+#### 步骤 1.5D: Gemini 一致性复核
 
 **执行者**: Gemini（织梦）  
 **模型**: `gemini/gemini-3.1-pro-preview`  
@@ -132,7 +132,7 @@ main（小光）
 
 **保存位置**: `~/.openclaw/workspace/agents/gemini/reports/review-YYYYMMDD_HHMMSS.md`
 
-#### Step 1.5E: 仲裁（按需）
+#### 步骤 1.5E: 仲裁（按需）
 
 **触发条件**：
 - Gemini 判定 MAJOR_DRIFT
@@ -150,9 +150,9 @@ main（小光）
 
 ---
 
-### Step 1.5S: NotebookLM 深度研究 + Spec-Kit 落地
+### 步骤 1.5S: NotebookLM 深度研究 + Spec-Kit 落地
 
-#### Step 1.5S-A: NotebookLM 深度研究（新增）
+#### 步骤 1.5S-A: NotebookLM 深度研究（新增）
 
 **执行者**: NotebookLM（珊瑚）  
 **模型**: `anthropic/claude-opus-4-6`（内部调用 NotebookLM）  
@@ -173,7 +173,7 @@ main（小光）
 - 加速技术选型
 - 提升方案质量
 
-#### Step 1.5S-B: Brainstorming 落地 Spec-Kit
+#### 步骤 1.5S-B: Brainstorming 落地 Spec-Kit
 
 **执行者**: Brainstorming  
 **模型**: `anthropic/claude-sonnet-4-6`  
@@ -189,19 +189,19 @@ main（小光）
 
 ---
 
-### Step 2: Coding 开发
+### 步骤 2: Coding 开发
 
 **执行者**: Coding  
 **模型**: Type A: `anthropic/claude-sonnet-4-6` / Type B: `openai/gpt-5.4`  
 **Thinking**: medium  
 **输入**: Spec-Kit  
-**输出**: 代码 + Step 2.5 冒烟测试结果
+**输出**: 代码 + 步骤 2.5 冒烟测试结果
 
 **保存位置**: `~/.openclaw/workspace/agents/coding/`
 
 ---
 
-### Step 3: 双审（Claude + Gemini）
+### 步骤 3: 双审（Claude + Gemini）
 
 **执行方式**: Main 并行 spawn Claude 和 Gemini
 
@@ -237,7 +237,7 @@ main（小光）
 
 ---
 
-### Step 4: 修复循环（max 3 rounds）
+### 步骤 4: 修复循环（max 3 rounds）
 
 **执行者**: Main 编排  
 **循环内容**：
@@ -251,7 +251,7 @@ main（小光）
 
 ---
 
-### Step 5: Test 测试
+### 步骤 5: Test 测试
 
 **执行者**: Test  
 **模型**: Type A: `openai/gpt-5.4` / Type B: `anthropic/claude-sonnet-4-6`  
@@ -263,7 +263,7 @@ main（小光）
 
 ---
 
-### Step 5.5: Epoch 诊断与仲裁（按需）
+### 步骤 5.5: Epoch 诊断与仲裁（按需）
 
 **触发条件**：
 - 测试失败
@@ -277,7 +277,7 @@ main（小光）
 
 ---
 
-### Step 6: 文档生成
+### 步骤 6: 文档生成
 
 **执行者**: Docs  
 **模型**: `minimax/MiniMax-M2.5`  
@@ -289,13 +289,13 @@ main（小光）
 
 ---
 
-### Step 7: 汇总交付
+### 步骤 7: 汇总交付
 
 **执行者**: Main（小光）  
 **输入**: 所有 agent 产物  
 **输出**: 
 - 汇总报告
-- 通知晨星（Telegram DM: 1099011886）
+- 按条件通知晨星（Telegram DM: 1099011886）—— 仅最终结果 / BLOCKED / 长任务摘要
 - 通知监控群（-5131273722）
 
 ---
@@ -332,9 +332,9 @@ sub-agent 只返回结果给 main，**不自己推群**。所有群通知由 mai
 
 | 类型 | 触发时机 | 发往 |
 |------|---------|------|
-| **START** | agent 开始执行本步骤时 | main 推送职能群 + 监控群 + 晨星DM |
-| **COMPLETION** | agent 完成本步骤时（含结果摘要） | main 推送职能群 + 监控群 + 晨星DM |
-| **FAILURE** | agent 遇到错误/卡点时 | main 推送职能群 + 监控群 + 晨星DM |
+| **START** | agent 开始执行本步骤时 | main 推送职能群 + 监控群；晨星DM 仅按条件触发 |
+| **COMPLETION** | agent 完成本步骤时（含结果摘要） | main 推送职能群 + 监控群；晨星DM 仅按条件触发 |
+| **FAILURE** | agent 遇到错误/卡点时 | main 推送职能群 + 监控群；晨星DM 在需要介入时必发 |
 
 ### 通知内容要求
 - START/COMPLETION 必须包含：步骤名称、本步骤做了什么、下一步是什么
@@ -359,25 +359,25 @@ sub-agent 只返回结果给 main，**不自己推群**。所有群通知由 mai
 
 ---
 
-## Model Baseline
+## 模型基线
 
 | Step | 默认模型/执行者 | Thinking Level | 说明 |
 |------|------------------|----------------|------|
-| Step 1 | `main / opus` | high | 判断任务类型、复杂度、是否需要仲裁 |
-| Step 1.5A | `gemini` | medium (L1/L2) / high (L3) | 扫描问题 |
-| Step 1.5B | `openai (gpt)` | medium (L1) / high (L2/L3) | 宪法制定 |
-| Step 1.5C | `claude / opus` | medium (L1/L2) / high (L3) | 实施计划 |
-| Step 1.5D | `gemini` | medium | 一致性复核 |
-| Step 1.5E | `openai/claude`（按需） | high | 仲裁 |
-| Step 1.5S-A | `notebooklm / opus` | high | 深度研究 |
-| Step 1.5S-B | `brainstorming / sonnet` | medium (L1/L2) / high (L3) | Spec-Kit 落地 |
-| Step 2 | `coding / sonnet(A) or gpt(B)` | medium | 开发 |
-| Step 3 | `claude / opus` + `gemini` | medium (L1/L2) / high (L3) | 双审 |
-| Step 4 | `brainstorming + coding + review` | medium | 修复循环 |
-| Step 5 | `test / gpt(A) or sonnet(B)` | medium | 测试 |
-| Step 5.5 | `gemini + claude + brainstorming + openai/claude` | high | Epoch 诊断与仲裁 |
-| Step 6 | `docs / minimax` | medium | 文档生成 |
-| Step 7 | `main / opus` | high | 汇总与最终通知 |
+| 步骤 1 | `main / opus` | high | 判断任务类型、复杂度、是否需要仲裁 |
+| 步骤 1.5A | `gemini` | medium (L1/L2) / high (L3) | 扫描问题 |
+| 步骤 1.5B | `openai (gpt)` | medium (L1) / high (L2/L3) | 宪法制定 |
+| 步骤 1.5C | `claude / opus` | medium (L1/L2) / high (L3) | 实施计划 |
+| 步骤 1.5D | `gemini` | medium | 一致性复核 |
+| 步骤 1.5E | `openai/claude`（按需） | high | 仲裁 |
+| 步骤 1.5S-A | `notebooklm / opus` | high | 深度研究 |
+| 步骤 1.5S-B | `brainstorming / sonnet` | medium (L1/L2) / high (L3) | Spec-Kit 落地 |
+| 步骤 2 | `coding / sonnet(A) or gpt(B)` | medium | 开发 |
+| 步骤 3 | `claude / opus` + `gemini` | medium (L1/L2) / high (L3) | 双审 |
+| 步骤 4 | `brainstorming + coding + review` | medium | 修复循环 |
+| 步骤 5 | `test / gpt(A) or sonnet(B)` | medium | 测试 |
+| 步骤 5.5 | `gemini + claude + brainstorming + openai/claude` | high | Epoch 诊断与仲裁 |
+| 步骤 6 | `docs / minimax` | medium | 文档生成 |
+| 步骤 7 | `main / opus` | high | 汇总与最终通知 |
 
 ---
 
@@ -391,7 +391,7 @@ sub-agent 只返回结果给 main，**不自己推群**。所有群通知由 mai
 
 1. **第一次失败** → 立即重试（相同参数）
 2. **第二次失败** → 等待 10 秒后重试
-3. **第三次仍失败** → 推送告警到监控群 + 通知晨星 → 标记 BLOCKED
+3. **第三次仍失败** → 推送告警到监控群 + 按条件通知晨星 → 标记 BLOCKED
 
 ---
 

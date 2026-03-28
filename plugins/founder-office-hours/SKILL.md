@@ -1,125 +1,129 @@
 ---
 name: founder-office-hours
-description: Run a lightweight founder/CEO-style product framing pass before planning or building. Use when a request involves product direction, feature shaping, scope cuts, user-value questions, wedge definition, prioritization, or “should we build this at all?” decisions, especially before starchain, autoplan-lite, or medium-to-large coding work.
+description: 在规划或开发之前，先做一轮轻量 创始人 / CEO 视角的产品打磨。适用于涉及产品方向、功能塑形、范围 收缩、用户价值判断、切入点 定义、优先级取舍，或“这东西到底值不值得做”的请求，尤其适合在 starchain、autoplan-lite 或中大型开发前使用。
 ---
 
-# Founder Office Hours
+# `founder-office-hours`（产品打磨）
 
-## Overview
+## 作用
 
-Use this skill to sharpen a request before execution. The job is not to produce an implementation plan yet; the job is to decide whether the problem is worth solving, what the smallest valuable version is, what should be cut, and what decision the human actually needs to make.
+这项技能的目标不是直接产出实现计划，而是先把问题打磨清楚：
+- 这事值不值得做
+- 最小有价值版本是什么
+- 哪些范围应该先砍掉
+- 人真正需要做的决策是什么
 
-## Good fits
+## 适用场景
 
-Use this skill for:
-- new product ideas
-- medium or large feature proposals
-- feature requests with unclear user value
-- “should we build this?” decisions
-- requests that feel too broad, fuzzy, or overbuilt
-- pre-planning work before `autoplan-lite` or a heavier pipeline
+适合：
+- 新产品想法
+- 中大型功能提案
+- 用户价值不清晰的功能需求
+- “这东西到底该不该做”的判断
+- 范围太大、太虚、太像过度设计的请求
+- 在 `autoplan-lite` 或更重流水线之前，先做产品打磨
 
-Do not use it for:
-- tiny implementation details
-- already-well-scoped execution tasks
-- pure bug fixes with obvious scope
-- final engineering sequencing
+不适合：
+- 很小的实现细节
+- 已经 范围 很清晰的执行任务
+- 边界明显的普通 bugfix
+- 最终工程排序与排期本身
 
-## Output contract
+## 输出合约
 
-Produce a concise framing note with these sections:
-- Core problem
-- Who benefits
-- Why now
-- Smallest useful wedge
-- Scope to cut
-- Key tradeoffs
-- Decision recommendation
-- Open questions for the human
+输出一份简短的打磨说明，包含：
+- 核心问题
+- 谁受益
+- 为什么现在做
+- 最小有价值 切入点
+- 应该砍掉的范围
+- 关键取舍
+- 决策建议
+- 需要人回答的开放问题
 
-The output should help the human choose or refine a direction. Do not turn this into an implementation checklist.
+重点是帮助人类**选方向 / 收范围**，而不是把它写成实现 checklist。
 
-## Core lens
+## 核心视角
 
-Think like a strong founder or product lead:
-- What user pain is real here?
-- Is this a valuable wedge or just more surface area?
-- What is the cheapest version that creates signal?
-- What should be explicitly cut to keep momentum?
-- What makes this worth doing now instead of later?
+像一个强产品负责人 / founder 一样思考：
+- 这里真实存在的用户痛点是什么？
+- 这是有价值的 切入点，还是单纯增加表面积？
+- 最便宜、但仍能产生信号的版本是什么？
+- 为了保住推进速度，什么必须明确砍掉？
+- 为什么现在做，而不是以后做？
 
-Prefer sharper scope over broader ambition.
+默认偏向：**更锋利的 范围，而不是更大的 野心。**
 
-## Workflow
+## 工作流
 
-### Step 1 — Restate the real decision
+### 步骤 1 — 先把请求改写成“决策问题”
 
-Rewrite the request as a decision, not just a feature idea.
+不是把它当成功能想法，而是改写成一个决策：
 
-Examples:
-- not “build X dashboard”
-- but “decide whether X dashboard is the right minimal lever for visibility into Y”
+例如：
+- 不说“做一个 X dashboard”
+- 而说“判断 X dashboard 是否真的是解决 Y 可视性问题的最小杠杆”
 
-### Step 2 — Identify user and value
+### 步骤 2 — 明确用户与价值
 
-Clarify:
-- primary user or operator
-- concrete pain or frustration
-- desired behavior change or operational gain
-- why current alternatives are insufficient
+澄清：
+- 主要用户 / 操作者是谁
+- 具体痛点或挫败是什么
+- 希望带来什么行为变化或运营收益
+- 为什么当前替代方案不够好
 
-If user value is weak or abstract, say so directly.
+如果用户价值很弱或很抽象，要直接说出来。
 
-### Step 3 — Define the smallest wedge
+### 步骤 3 — 找出最小 切入点
 
-Find the minimal version that would still create meaningful learning, value, or leverage.
+定义那个最小但仍能产生学习、价值或杠杆的版本。
 
-Ask:
-- what is the smallest useful version?
-- what can be postponed safely?
-- what would make this feel obviously overbuilt?
+要问：
+- 最小可用版本是什么？
+- 哪些内容可以安全后置？
+- 什么会让它明显变成过度设计？
 
-### Step 4 — Cut scope aggressively
+### 步骤 4 — 激进收 范围
 
-Name the parts that should not be in v1.
+明确指出哪些内容**不该进 v1**。
 
-Good cuts include:
-- admin surfaces
-- analytics before core usage exists
-- settings for hypothetical future needs
-- automation layers before manual value is proven
-- multi-role support when one operator path is enough
+典型可砍内容：
+- admin 面板
+- 在核心使用还没成立前就做 analytics
+- 为假想未来准备的大量 settings
+- 手动价值还没被证明前就叠自动化层
+- 明明单操作者路径就够，却提前做多角色支持
 
-### Step 5 — Surface tradeoffs and timing
+### 步骤 5 — 暴露取舍与时机
 
-Identify the most important tradeoffs:
-- speed vs completeness
-- leverage vs polish
-- signal vs certainty
-- operator convenience vs user impact
+识别最关键的取舍：
+- 速度 vs 完整性
+- 杠杆 vs 精致度
+- 信号 vs 确定性
+- 操作便利 vs 用户影响
 
-Also ask whether the work is worth doing now.
+同时判断：**这事现在做值不值。**
 
-### Step 6 — Recommend a decision
+### 步骤 6 — 给出明确决策建议
 
-End with one of these recommendations:
-- build the wedge now
-- shrink and build
-- defer
-- reject
-- gather one missing input first
+最后必须收束到以下之一：
+- 现在就做这个 切入点
+- 缩小后再做
+- 延后
+- 拒绝
+- 先补一个关键缺失输入
 
-Be decisive unless uncertainty is truly blocking.
+除非不确定性真的挡路，否则要果断。
 
-## Handoff guidance
+## 交接规则
 
-If the decision is “build” or “shrink and build,” hand off naturally into `autoplan-lite` or a heavier planning lane.
+如果结论是“做”或“缩小后做”，自然交给 `autoplan-lite` 或更重的规划链。
 
-If the answer is “defer” or “reject,” say why clearly so the human can trust the cut.
+如果结论是“延后”或“拒绝”，要把原因写清楚，让人能信服这次裁剪。
 
-## Example triggers
+## 示例触发
 
 - “这个想法值不值得做？”
 - “先别规划实现，先帮我做产品打磨”
-- “这个功能 scope 太大了，帮我砍到最小可做版本”
+- “这个功能 范围 太大了，帮我砍到最小可做版本”
 - “站在 founder 视角看，这个到底是不是现在该做的事？”

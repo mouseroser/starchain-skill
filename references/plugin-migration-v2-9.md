@@ -1,21 +1,21 @@
-# StarChain v2.9 Plugin Migration Blueprint
+# 星链 v2.9 插件迁移蓝图
 
-## Goal
+## 目标
 
-Promote the following long-term skills into official StarChain plugins:
+把以下长期技能提升为 StarChain 官方插件：
 - `founder-office-hours`
 - `autoplan-lite`
 - `review-gate`
 - `qa-browser-check`
 - `release-retro`
 
-The target state is a cleaner StarChain package with:
-- one core orchestration skill
-- a `plugins/` directory for long-term enhancement modules
-- explicit plugin ownership and trigger semantics
-- temporary backward compatibility during transition
+目标状态是让 StarChain 包结构更清晰：
+- 一个核心编排 skill
+- 一个 `plugins/` 目录承载长期增强模块
+- 明确的插件 owner 与触发语义
+- 迁移期内保留临时兼容策略
 
-## Target Structure
+## 目标结构
 
 ```text
 starchain/
@@ -38,171 +38,171 @@ starchain/
         └── SKILL.md
 ```
 
-## Plugin Classification
+## 插件分级
 
-### Core plugins
-These should be treated as core StarChain plugins:
+### 核心插件
+这些模块应视为 StarChain 核心插件：
 - `founder-office-hours`
 - `autoplan-lite`
 - `review-gate`
 
-### Conditional plugins
-These should be treated as route-dependent plugins:
+### 条件插件
+这些模块应视为路线相关插件：
 - `qa-browser-check`
 - `release-retro`
 
-## Intended Runtime Semantics
+## 目标运行语义
 
 ### `founder-office-hours`
-- plugin type: pre-planning / product-framing
-- default use: L3, selected L2
-- role: sharpen problem framing before deep planning or build
+- 插件类型：前置规划 / 产品打磨
+- 默认使用：L3、部分 L2
+- 角色：在深规划或实现前，把问题打磨锋利
 
 ### `autoplan-lite`
-- plugin type: lite-planning core
-- default use: L2 default planning route
-- role: produce a compact execution-ready plan and decide whether Lite can converge or should escalate to Full
+- 插件类型：轻量规划核心
+- 默认使用：L2 默认规划路线
+- 角色：输出短小可执行计划，并判断 Lite 是否还能收敛，还是要升级到 Full
 
 ### `review-gate`
-- plugin type: quality gate
-- default use: after coding in Lite and Full
-- role: decide go / no-go for QA or next step
+- 插件类型：质量门
+- 默认使用：Lite 与 Full 的 coding 之后
+- 角色：判断能否进入 QA 或下一阶段
 
 ### `qa-browser-check`
-- plugin type: browser QA gate
-- default use: UI / workflow / browser-visible tasks only
-- role: validate main browser path after review-gate
+- 插件类型：浏览器 QA 门
+- 默认使用：仅用于 UI / workflow / browser-visible 任务
+- 角色：在 review-gate 之后验证主浏览器路径
 
 ### `release-retro`
-- plugin type: post-delivery retro
-- default use: meaningful L2/L3 deliveries with learning value
-- role: capture reusable improvements and patterns
+- 插件类型：交付后复盘
+- 默认使用：有学习价值的 L2 / L3 交付
+- 角色：沉淀可复用改进与重复模式
 
-## Migration Policy
+## 迁移策略
 
-### Phase 1 — Documentation-first migration
-Before moving files:
-- declare these modules as official StarChain plugins in `starchain/SKILL.md`
-- add plugin references to the v2.9 contract
-- document migration target and compatibility policy
+### 阶段 1 — 文档先行迁移
+在物理移动文件之前：
+- 在 `starchain/SKILL.md` 中声明这些模块为官方插件
+- 在 v2.9 contract 中加入插件层定义
+- 先写清楚迁移目标与兼容策略
 
-Status: in progress
+状态：已完成
 
-### Phase 2 — Physical directory migration
-Move the five skill directories into `starchain/plugins/`.
+### 阶段 2 — 目录迁移
+把五个 skill 目录迁到 `starchain/plugins/` 下。
 
-Required actions:
-1. create `starchain/plugins/`
-2. move each plugin directory under it
-3. verify each plugin `SKILL.md` still stands alone and reads correctly
-4. update any references that assume top-level placement
+必做动作：
+1. 创建 `starchain/plugins/`
+2. 将每个插件目录移动进去
+3. 确保每个插件 `SKILL.md` 仍可独立阅读
+4. 更新所有假设其仍处于顶层路径的引用
 
-### Phase 3 — Compatibility layer
-Keep temporary compatibility during transition.
+### 阶段 3 — 兼容层清理
+在迁移期内保留短暂兼容，但不能长期双写。
 
-Recommended compatibility policy:
-- short term: keep top-level copies or stubs only if needed for discovery
-- medium term: remove top-level duplicates after StarChain docs and usage stabilize
+推荐兼容策略：
+- 短期：如果发现触发或发现链路仍依赖旧位置，可保留 stub 或兼容引用
+- 中期：当 StarChain 文档与使用方式稳定后，清掉顶层重复入口
 
-Preferred end state:
-- only StarChain-owned plugin directories remain
-- the core StarChain skill documents when each plugin should be invoked
+理想终态：
+- 只保留 StarChain 自己持有的插件目录
+- 核心 StarChain skill 明确记录每个插件何时启用
 
-## Reference Updates Required
+## 需要同步更新的引用
 
-Update these references after the physical move:
+物理迁移后要同步这些文件：
 - `starchain/SKILL.md`
 - `references/pipeline-v2-9-contract.md`
-- `references/PIPELINE_FLOWCHART_V2_9_EMOJI.md` (if path references are added later)
-- any future notes that name the plugins as standalone long-term skills
-- plugin-suite language should describe all five modules, with `autoplan-lite` as the Lite core plugin
+- `references/PIPELINE_FLOWCHART_V2_9_EMOJI.md`（如果未来加入路径说明）
+- 所有仍把插件写成“独立长期技能”的笔记
+- plugin-suite 的语言必须覆盖全部五个模块，并明确 `autoplan-lite` 是 Lite 核心插件
 
-## Naming Policy
+## 命名策略
 
-Prefer keeping the plugin folder names unchanged for now:
+当前优先保持插件目录名不变：
 - `founder-office-hours`
 - `review-gate`
 - `qa-browser-check`
 - `release-retro`
 
-Reason:
-- avoids unnecessary semantic churn
-- keeps existing tested wording intact
-- reduces migration risk
+原因：
+- 避免无意义语义抖动
+- 保持已验证命名稳定
+- 降低迁移风险
 
-If a later rename is desired, do it as a separate cleanup step.
+如果未来确实要重命名，应作为单独清理步骤处理。
 
-## Backward Compatibility Options
+## 向后兼容选项
 
-### Option A — Hard move now
-- move directories under `starchain/plugins/`
-- remove top-level copies immediately
-- update StarChain docs in the same change
+### 方案 A — 立即硬迁移
+- 直接把目录移到 `starchain/plugins/`
+- 立刻删除顶层副本
+- 同次变更完成 StarChain 文档更新
 
-Pros:
-- cleanest end state immediately
+优点：
+- 终态最干净
 
-Cons:
-- highest short-term breakage risk if anything still assumes top-level placement
+缺点：
+- 如果还有链路依赖旧位置，短期断裂风险最高
 
-### Option B — Move + temporary duplicate compatibility
-- move canonical plugin directories under `starchain/plugins/`
-- keep top-level copies briefly if needed
-- remove top-level copies after validation
+### 方案 B — 迁移 + 临时兼容副本
+- 先把规范目录迁到 `starchain/plugins/`
+- 如有需要，短期保留旧入口
+- 验证稳定后再删兼容副本
 
-Pros:
-- safer migration
+优点：
+- 更稳妥
 
-Cons:
-- temporary duplication risk
+缺点：
+- 会产生一段短期双源风险
 
-### Recommendation
-Use **Option B** if immediate compatibility uncertainty exists.
-Use **Option A** only if reference and trigger behavior are fully understood before the move.
+### 建议
+若仍存在兼容不确定性，优先 **方案 B**。  
+只有在所有引用与触发链都已被看清后，才使用 **方案 A**。
 
-## Validation Checklist
+## 验证清单
 
-After migration, validate:
-- StarChain core skill still reads cleanly
-- each plugin skill still validates individually
-- package validation still succeeds for StarChain
-- plugin ownership is explicit in docs
-- no stale top-level references remain
-- no duplicate long-term source of truth remains after cleanup
+迁移后要确认：
+- StarChain 核心 skill 仍能正常阅读
+- 每个插件 skill 仍可单独验证
+- StarChain 包整体验证通过
+- 文档中插件 owner 清晰
+- 不再残留旧的顶层引用
+- 清理完成后，不再存在长期双真相源
 
-## Risks
+## 风险
 
-### Risk 1 — stale references
-Some docs may continue to describe the plugins as standalone long-term skills.
+### 风险 1 — 过时引用
+有些文档可能仍把这些插件写成独立长期技能。
 
-Mitigation:
-- grep references after move
-- update ownership language in StarChain docs first
+缓解：
+- 迁移后做全局 grep
+- 先更新 StarChain 文档中的 owner 语言
 
-### Risk 2 — duplicate source of truth
-Keeping both top-level and plugin-local copies too long can create divergence.
+### 风险 2 — 双真相源
+如果顶层副本和插件目录长期并存，会自然漂移。
 
-Mitigation:
-- pick one canonical location quickly
-- set a cleanup deadline
+缓解：
+- 尽快选定唯一 canonical 位置
+- 给清理设 deadline
 
-### Risk 3 — over-coupling too early
-If plugin logic changes rapidly, deep structural nesting can slow iteration.
+### 风险 3 — 过早过深耦合
+如果插件逻辑仍在快速变化，过深目录嵌套可能拖慢迭代。
 
-Mitigation:
-- keep plugin content self-contained
-- keep names stable
-- avoid premature internal API contracts
+缓解：
+- 保持插件内容自包含
+- 保持命名稳定
+- 不要过早引入复杂内部 API 合约
 
-## Recommended Execution Order
+## 推荐执行顺序
 
-1. finish documentation-first migration
-2. grep all references to the four plugin names and current top-level paths
-3. choose Option A or B based on actual reference spread
-4. perform physical move
-5. validate packages and references
-6. remove temporary compatibility layer when stable
+1. 先完成文档迁移
+2. 全局 grep 所有插件名与旧顶层路径引用
+3. 根据真实引用扩散程度，在 方案 A / B 中做选择
+4. 执行物理迁移
+5. 验证包与引用
+6. 稳定后移除临时兼容层
 
-## Immediate Next Step
+## 当前下一步
 
-Run a reference scan to determine whether the four plugin skills can be hard-moved immediately or whether a temporary compatibility phase is required.
+做一次引用扫描，判断这些插件是否已经可以直接硬迁移，还是仍需要一个短暂兼容阶段。
