@@ -1,6 +1,6 @@
 ---
 name: starchain
-description: 星链（StarChain）多 agent 开发流水线 v3.0。适用于“用星链实现 XXX”这类中高复杂度开发/修复任务。v3.0 新增 pipeline agent，实现段落（coding → review → 修复循环 → test → docs）完全下放自治，main 只在分级/Constitution-First/收尾三点介入，支持 Lite 快车道、Full 主链、质量门和交付后短复盘。
+description: 星链（StarChain）多 agent 开发流水线 v3.0。适用于“用星链实现 XXX”这类中高复杂度开发/修复任务。v3.0 新增 织梭 agent（weaver），实现段落（coding → review → 修复循环 → test → docs）完全下放织梭自治，main 只在分级/Constitution-First/收尾三点介入，支持 Lite 快车道、Full 主链、质量门和交付后短复盘。
 ---
 
 # 星链 v3.0

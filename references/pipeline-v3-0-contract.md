@@ -8,9 +8,9 @@
 
 ### v3.0 主要改进（相比 v2.9）
 
-1. **新增 pipeline agent**：实现段落（Step 2 coding → Step 3 review-gate → Step 4.5 修复循环 → Step 4 test → Step 5 docs）下放给专用 `pipeline` agent 自治执行，main 不再逐步等待每个子步骤。
+1. **新增 织梭 agent**：实现段落（Step 2 coding → Step 3 review-gate → Step 4.5 修复循环 → Step 4 test → Step 5 docs）下放给专用 `weaver`（织梭） agent 自治执行，main 不再逐步等待每个子步骤。
 2. **main 减负**：星链运行期间 main 主会话解放，可并发处理其他任务（自媒体 Step 7 确认、临时请求等）。main 只在三个点介入：启动前（分级 + Constitution-First）、BLOCKED 上报、收尾汇总。
-3. **修复循环内化**：R1/R2/R3 修复迭代在 pipeline agent 内部自治，不再打扰 main。只有 R3 仍 NEEDS_FIX 或 REJECT 时才 BLOCKED 上报。
+3. **修复循环内化**：R1/R2/R3 修复迭代在 织梭 agent 内部自治，不再打扰 main。只有 R3 仍 NEEDS_FIX 或 REJECT 时才 BLOCKED 上报。
 4. **review 独立性保障**：pipeline 通过 sessions_send 与 review 通信，review 仍是独立质量门，不受 pipeline 编排干预。既出题又批卷的利益冲突被彻底消除。
 5. **浏览器 QA 正式入链**：涉及 UI / workflow / 浏览器可见路径时，`qa-browser-check` 成为 步骤 4 的正式分支，而不是临时补测。
 6. **交付后短复盘入链**：`release-retro` 作为 步骤 8 按需执行，用于沉淀 哪些做法有效 / 哪些地方受伤 / 重复出现的模式。
@@ -42,8 +42,8 @@ main（小光）
     ├── L2：优先评估是否适合 Lite 快车道
     │   ├── 步骤 1A：founder-office-hours（按需）
     │   ├── 步骤 1B：autoplan-lite
-    │   ├── 步骤 2-5：**pipeline agent**（coding → review-gate → 修复循环 → test → docs）
-    │   │   └── pipeline sessions_send 回 main（PASS 或 BLOCKED）
+    │   ├── 步骤 2-5：**织梭 agent**（coding → review-gate → 修复循环 → test → docs）
+    │   │   └── 织梭 sessions_send 回 main（PASS 或 BLOCKED）
     │   ├── 步骤 6：main 汇总交付
     │   ├── 步骤 7：main 可靠通知
     │   └── 步骤 8：release-retro（按需）
@@ -57,8 +57,8 @@ main（小光）
         │   ├── 步骤 1.5E：gemini 一致性复核
         │   ├── 步骤 1.5F：openai / claude 仲裁（按需）
         │   └── 步骤 1.5G：brainstorming 落地 Spec-Kit
-        ├── 步骤 2-5：**pipeline agent**（coding → review-gate → 修复循环 → test → docs）
-        │   └── pipeline sessions_send 回 main（PASS 或 BLOCKED）
+        ├── 步骤 2-5：**织梭 agent**（coding → review-gate → 修复循环 → test → docs）
+        │   └── 织梭 sessions_send 回 main（PASS 或 BLOCKED）
         ├── 步骤 6：main 汇总交付
         ├── 步骤 7：main 可靠通知
         └── 步骤 8：release-retro（按需）
